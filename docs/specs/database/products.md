@@ -16,7 +16,7 @@ Database: SQLite via better-sqlite3, file `backend/data/truck2hand.db`. Enable `
 | title | Yes | TEXT | Post title / truck name | Hino FC210 รถบรรทุก 6 ล้อ สภาพพร้อมใช้ |
 | description | No | TEXT | Truck description (paragraph on detail page) | รถใช้งานน้อย เครื่องดี เอกสารครบ |
 | price | Yes | INTEGER | Selling price, whole THB (no satang) | 1480000 |
-| year | Yes | INTEGER | Truck year / registration year — used by the dropdown and year-range filter | 2018 |
+| year | Yes | INTEGER | Truck year. User-facing label is ปีที่ผลิต on the filter, detail page, and create/edit dropdown | 2018 |
 | created_at | Yes | TEXT | Creation timestamp ISO-8601 (not updatable) | 2026-09-03T10:00:00+07:00 |
 | updated_at | Yes | TEXT | Last update timestamp ISO-8601 (set by the app; no ON UPDATE) | 2026-09-03T10:00:00+07:00 |
 
@@ -28,6 +28,8 @@ Database: SQLite via better-sqlite3, file `backend/data/truck2hand.db`. Enable `
 | model_id | Yes | INTEGER | FK → `models.id` (brand via `models.brand_id`) | 1 |
 | seller_id | Yes | INTEGER | FK → `sellers.id` | 1 |
 | view_count | Yes | INTEGER | Detail-page views, default 0 — "most viewed" sort | 42 |
+
+There is no listing-status column. The manage screenshot's สถานะ / "กำลังขาย" badge is not stored and is not part of this table.
 
 ## Constraints and indexes (DERIVED)
 

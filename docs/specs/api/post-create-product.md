@@ -56,6 +56,8 @@ Implemented in the service layer and unit-tested. Every failure returns 400 `T2H
 
 Seller upsert (DERIVED, REQUIREMENTS Q4): look up by normalised `phone`; if found, update name / lineUrl / avatarUrl / isVerified and reuse its id; otherwise insert.
 
+The management form collects `vehicleTypeId` from the ประเภทรถ dropdown and `seller.isVerified` from the "ผู้ขายยืนยันตัวตน" checkbox (REQUIREMENTS C7). The server does not infer either field.
+
 Prohibited-keyword starter list (placeholder until Q2 is answered): `รถไม่มีเล่ม`, `รถสวมทะเบียน`, `รถหนีภาษี`, `รถโจร`, `ยาเสพติด`, `อาวุธ`, `ปืน`. Error message: "ไม่อนุญาตให้ลงประกาศสินค้าผิดกฎหมาย".
 
 ## Response — 201 Created (DERIVED status; CF body)

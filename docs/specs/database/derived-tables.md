@@ -62,14 +62,27 @@ Constraints: UNIQUE (`product_id`, `sort_order`); partial unique index `ON produ
 | 3 | 10 ล้อ |
 | 4 | หัวลาก |
 
-`brands` / `models` — `HINO / FC210` must be model id 1 (Confluence example). `ASSUMPTION` starter list for the dropdowns:
+`brands` / `models` — insert in this order so `HINO / FC210` is model id 1 (Confluence example). Names below include the homepage cards (`GXZ`, `NPR`, `WU`, `FC`) plus the original starter list. This is demo data; it does not have to match a real catalog.
 
-| Brand | Models |
+| Brand | Models (insert in this order) |
 | --- | --- |
-| HINO | FC210, FM1A, 500 Series |
-| ISUZU | NLR, FRR, FXZ |
+| HINO | FC210, FC, FM1A, 500 Series, WU |
+| ISUZU | NLR, FRR, FXZ, GXZ, NPR |
 | MITSUBISHI FUSO | Canter, Fighter |
 | VOLVO | FH |
 | SCANIA | R-Series |
 
-Demo listings (REQUIREMENTS Q8 — `ASSUMPTION` yes): 6 listings covering all four vehicle types, prices 350,000–3,200,000, years 2012–2022, at least one unverified seller and one without LINE. Images are placeholder PNGs generated locally by the seed script into `backend/uploads/` (no network downloads). Run with `npm run seed` in `backend/`; `npm run seed:reset` drops and recreates the database.
+Demo listings (REQUIREMENTS Q8): 8 listings using the homepage names and the models added above. Every seller is verified and has a `https://line.me/` URL. Images are placeholder PNGs generated locally into `backend/uploads/` (no network downloads). Vehicle type is the value in this table; the create form sets it from the ประเภทรถ dropdown.
+
+| # | Title | Brand | Model | Year | Price (THB) | Seller | Vehicle type |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | หัวลาก 12ล้อ GXZ 360 JT หางแซมิเทรลเลอร์ | ISUZU | GXZ | 2021 | 2780000 | JJautocar | หัวลาก |
+| 2 | ISUZU NLR130 ป66 กระบะคาร์โก้ ไม่ติดเวลา | ISUZU | NLR | 2023 | 750000 | JJautocar | 6 ล้อ |
+| 3 | 6 ล้อดั๊มพ์ HINO DUTRO 12แรง | HINO | WU | 2004 | 520000 | อนะ รถบรรทุก | 6 ล้อ |
+| 4 | Isuzu 6 ล้อ กระบะสแตนเลส 150 แรง เครื่องดี ยางดี | ISUZU | NPR | 2003 | 380000 | นาย Truck2Hand | 6 ล้อ |
+| 5 | Hino FC210 ป65 6ล้อ ตู้เย็น ยาว6.5 เมตร | HINO | FC | 2022 | 1480000 | เต็ง ซื้อขายรถบรรทุก | 6 ล้อ |
+| 6 | ISUZU NLR130 4ล้อ ไม่ติดเวลา ป66 ไมล์ 1x,xxx | ISUZU | NLR | 2023 | 899000 | เต็ง ซื้อขายรถบรรทุก | 4 ล้อ |
+| 7 | 10 ล้อ HINO FM1A | HINO | FM1A | 2016 | 980000 | อนะ รถบรรทุก | 10 ล้อ |
+| 8 | หัวลาก SCANIA R-Series | SCANIA | R-Series | 2019 | 3200000 | นาย Truck2Hand | หัวลาก |
+
+Listings 7 and 8 are fillers so the count is 8; they are not visible in the homepage crop. Sellers may share a phone when the screenshot shows the same name on more than one card (JJautocar, เต็ง ซื้อขายรถบรรทุก, อนะ รถบรรทุก, นาย Truck2Hand). Run with `npm run seed` in `backend/`; `npm run seed:reset` drops and recreates the database.

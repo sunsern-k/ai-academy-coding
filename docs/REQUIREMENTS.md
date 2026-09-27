@@ -20,7 +20,7 @@ This file is the product source of truth for `app-architect` and `app-builder`. 
 
 ## UI examples
 
-Use these UI examples as a guide for the desing UIs.
+Use these screenshots as a visual guide. They are not a second product spec. When a screenshot disagrees with this file or the acceptance criteria, follow the written spec.
 
 - Home page: docs/specs/ui/homepage.png
 - Manage listing: docs/specs/ui/manage_listing.png
@@ -66,9 +66,9 @@ No authentication (the API is public per the Confluence notes). The back-office 
 - **Grid** of product cards, 3–4 per row on desktop (see responsive rules).
 - **Card**, top to bottom: large cover image → title → gray small meta line `ยี่ห้อ | รุ่น | ปี` → price in large red text → seller avatar + seller name + green badge "ผู้ขายยืนยันตัวตน" (shown only when `sellerIsVerified` is true) → bottom-right: LINE icon button and phone icon button.
   - Clicking the card (image or title) opens `/products/:id`.
-  - Phone button → `tel:{sellerPhone}`. LINE button → opens `sellerLineUrl` in a new tab; hidden when `sellerLineUrl` is null. Clicking these buttons must not also navigate to detail.
-- **Filters** (all combinable at once, applied together): vehicle type (4 ล้อ, 6 ล้อ, 10 ล้อ, หัวลาก), price range (min/max), registration-year range (min/max), brand, model (model options depend on the selected brand). A "ล้างตัวกรอง" control resets all filters.
-- **Sort** dropdown: newest (default), price low→high, price high→low, most viewed.
+  - Phone button → `tel:{sellerPhone}`. The LINE icon button is always shown, including when `sellerLineUrl` is null. Clicking it shows the message "ติดต่อผู้ขายรายนี้ผ่าน LINE" and does not open a URL. Clicking these buttons must not also navigate to detail.
+- **Filters** (all combinable at once, applied together): one vehicle type (4 ล้อ, 6 ล้อ, 10 ล้อ, หัวลาก — single select, query `vehicle_type_id`), price range (min/max), year range labeled "ปีที่ผลิต" (min/max), brand, and model. Model is a dropdown of models for the selected brand and stays disabled until a brand is selected. A "ล้างตัวกรอง" control resets all filters.
+- **Sort** dropdown, four behaviors only: newest (default), price low→high, price high→low, most viewed. Demo script labels for two of them are "ราคา ต่ำ→สูง" and "ดูมากที่สุด". No other sort options.
 - Filter and sort state is kept in the URL query string so reload and back-navigation keep it.
 - **Pagination:** `ASSUMPTION` simple previous/next pager with "หน้า X / Y"; request `per_page=12` (fills 3- and 4-column rows).
 - **Empty state** when no products match: "ไม่พบสินค้าที่ตรงกับเงื่อนไข".
@@ -79,7 +79,9 @@ No authentication (the API is public per the Confluence notes). The back-office 
 
 - Two columns: left gallery, right information.
 - **Left:** large main image on top; thumbnails in a row below; clicking a thumbnail swaps the main image. The cover image is shown first.
-- **Right:** title and price (large red) at top → full description (preserve line breaks) → vehicle box (ยี่ห้อ, รุ่น, ปีที่ผลิต) → seller box (ชื่อ, เบอร์โทรศัพท์, ลิงก์ Line) → large buttons at the bottom: "ติดต่อผู้ขาย" (`tel:` link) and "แอดไลน์" (LINE URL, hidden when null).
+- **Right:** title and price (large red) at top → full description (preserve line breaks) → vehicle box (ยี่ห้อ, รุ่น, ปีที่ผลิต) → seller box (ชื่อ, เบอร์โทรศัพท์, ลิงก์ Line) → large buttons at the bottom: "ติดต่อผู้ขาย" (`tel:` link) and "แอดไลน์".
+  - Do not add the screenshot's breadcrumb or "โพสต์เมื่อ".
+  - "แอดไลน์" is always shown. Clicking it shows "ติดต่อผู้ขายรายนี้ผ่าน LINE" and does not open a URL.
 - When the page opens, record one view (`POST /v1/api/products/:id/views`) — this feeds the "most viewed" sort.
 - Unknown id → "ไม่พบสินค้านี้" with a link back to home.
 
@@ -91,11 +93,10 @@ No authentication (the API is public per the Confluence notes). The back-office 
 - **Modal form (create / edit):**
   - Product images: PNG/JPG only, add and remove, **1–4 images**, exactly one marked as cover ("ตั้งเป็นภาพปก"); the first uploaded image is the cover by default; the cover can be changed when editing (DoD).
   - Text inputs: ชื่อรถ, ราคา; textarea: รายละเอียด.
-  - Dropdowns: ประเภทรถ, ยี่ห้อ, รุ่น (filtered by brand), ปีรถ.
-  - Seller: avatar upload (PNG/JPG, optional), ชื่อคนขาย, เบอร์โทร, ลิงก์ไลน์, and checkbox "ผู้ขายยืนยันตัวตน" (`ASSUMPTION`: the API requires `seller.isVerified` but the story has no field for it).
+  - Dropdowns: ประเภทรถ, ยี่ห้อ, รุ่น (filtered by brand), ปีที่ผลิต. Ignore the create screenshot, which omits ประเภทรถ and labels the year "ปีรถ".
+  - Seller: avatar upload (PNG/JPG, optional), ชื่อคนขาย, เบอร์โทร, ลิงก์ไลน์ (optional), and checkbox "ผู้ขายยืนยันตัวตน". Ignore the screenshot's required LINE mark and its missing checkbox.
   - Footer buttons: "ยกเลิก" (close without saving) and "บันทึกข้อมูล" (save).
   - Field errors appear under each field; server errors (e.g. duplicate title) are mapped to the same place. Save is disabled while the request is in flight.
-- `ASSUMPTION`: the vehicle-type dropdown is not in the Confluence form list but `vehicleTypeId` is required by the API and the home filter, so it is included.
 
 ### Validation and error handling (from DoD)
 
@@ -136,7 +137,7 @@ Professional and clean marketplace, not a flashy marketing site.
 
 ## UI copy
 
-Use these strings verbatim: `Truck2Hand`, `จัดการสินค้า`, `ผู้ขายยืนยันตัวตน`, `ติดต่อผู้ขาย`, `แอดไลน์`, `ระบบจัดการสินค้า`, `+ สร้างรายการใหม่`, `รูปภาพ`, `ชื่อสินค้า`, `ยี่ห้อ`, `รุ่น`, `ปี`, `ปีที่ผลิต`, `ราคา`, `จัดการ`, `ยกเลิก`, `บันทึกข้อมูล`, `ประเภทรถ`, `4 ล้อ`, `6 ล้อ`, `10 ล้อ`, `หัวลาก`. Strings marked `ASSUMPTION` above (empty states, confirm dialog, "ล้างตัวกรอง", "ตั้งเป็นภาพปก") may be adjusted by the product owner.
+Use these strings verbatim: `Truck2Hand`, `จัดการสินค้า`, `ผู้ขายยืนยันตัวตน`, `ติดต่อผู้ขาย`, `แอดไลน์`, `ติดต่อผู้ขายรายนี้ผ่าน LINE`, `ระบบจัดการสินค้า`, `+ สร้างรายการใหม่`, `รูปภาพ`, `ชื่อสินค้า`, `ยี่ห้อ`, `รุ่น`, `ปี`, `ปีที่ผลิต`, `ราคา`, `จัดการ`, `ยกเลิก`, `บันทึกข้อมูล`, `ประเภทรถ`, `4 ล้อ`, `6 ล้อ`, `10 ล้อ`, `หัวลาก`, `ล้างตัวกรอง`. The year field is labeled `ปีที่ผลิต` on the filter, the detail page, and the create/edit dropdown. The card meta line stays the short pattern `ยี่ห้อ | รุ่น | ปี`. Strings marked `ASSUMPTION` above (empty states, confirm dialog, "ตั้งเป็นภาพปก") may be adjusted by the product owner.
 
 ## Resolved conflicts
 
@@ -144,9 +145,22 @@ Use these strings verbatim: `Truck2Hand`, `จัดการสินค้า`
 | --- | --- | --- |
 | C1 | DoD requires sort by most viewed; GET list `sort_by` allows only `id, price, year, created_at` | Add `view_count` to `sort_by` and a `view_count` column (derived). |
 | C2 | POST example uses image paths `/images/products/…`; GET notes say files live in `uploads/` served at `/uploads/**` | Store paths as `/uploads/products/<file>` and `/uploads/sellers/<file>`; the POST example is treated as illustrative. |
-| C3 | Story says "ปีที่ผลิต" (detail) and "ปีจดทะเบียน" (filter); DB has one `year` column | One field `year` used for both labels. |
+| C3 | Detail, filter, and form used "ปีที่ผลิต", "ปีจดทะเบียน", and "ปีรถ" for one `year` column | One field `year`. Every user-facing label is "ปีที่ผลิต". |
 | C4 | `products` table has no foreign keys, but the POST body carries `vehicleTypeId`, `modelId` and a seller | Add `vehicle_type_id`, `model_id`, `seller_id`, `view_count` (see `database/products.md` § Derived columns). |
 | C5 | Only two endpoints specified; Stories 2–3 need detail, update, delete, upload and dropdown data | Specified in `api/derived-endpoints.md`, reusing the same conventions. |
+| C6 | Screenshots show search, bookmarks, multi-select vehicle type, a type-in model field, manage สถานะ, and different headings | Do not build those. Search UI and favourites stay out of scope. Filters, sort, and manage wording follow this file. See the screenshot table below. |
+| C7 | Create mock has no vehicle-type dropdown and no verified checkbox, and marks LINE required | Follow this file: show ประเภทรถ and "ผู้ขายยืนยันตัวตน". `seller.lineUrl` stays optional. Year label is "ปีที่ผลิต", not the mock's "ปีรถ". |
+| C8 | LINE button opened `sellerLineUrl`; acceptance criteria always showed it | Always show the LINE button. Click shows "ติดต่อผู้ขายรายนี้ผ่าน LINE" and does not open a URL. |
+
+### Screenshot differences that this file does not adopt
+
+| Screenshot | What it shows | What to build |
+| --- | --- | --- |
+| Home | Header search, card bookmark, title "รายการรถบรรทุกมือสองล่าสุด", "พบสินค้าทั้งหมด N รายการ", vehicle-type checkboxes, type-in model, clear label "ล้างค่า", no sort dropdown | No search box, no bookmark, no result-count title. One vehicle-type select, brand-dependent model dropdown, "ล้างตัวกรอง", and the four sort behaviors. |
+| Manage | "ระบบจัดการหลังบ้าน", "จัดการรายการรถบรรทุก", "+ เพิ่มรายการใหม่", columns ปี and สถานะ ("กำลังขาย"), pager "แสดง 1 ถึง 2 จาก 2 รายการ" | Story 3 wording and columns. No status column in the database. |
+| Delete dialog | "ยืนยันการลบรายการ" and a solid red "ลบรายการ" button | Confirm "ยืนยันการลบสินค้านี้?". Delete stays a quiet red control. |
+| Detail | "ปีรถ", "โพสต์เมื่อ", buttons "แชทผ่าน LINE" / "โทรติดต่อ" | Vehicle box uses "ปีที่ผลิต". Seller box shows name, phone, and LINE link. Buttons are "ติดต่อผู้ขาย" and "แอดไลน์". No breadcrumb and no "โพสต์เมื่อ". |
+| Create | No ประเภทรถ, no verified checkbox, LINE marked required, year label "ปีรถ" | Show ประเภทรถ and "ผู้ขายยืนยันตัวตน". LINE is optional. Year dropdown label is "ปีที่ผลิต". |
 
 ## Open questions (confirm with product owner)
 
@@ -154,12 +168,12 @@ Each has a working `ASSUMPTION` so the build is not blocked.
 
 - **Q1** Are the `DERIVED` endpoints and tables acceptable, or will Confluence pages be written for them?
 - **Q2** What counts as "สินค้าผิดกฎหมาย"? Current assumption: keyword blocklist (e.g. `รถไม่มีเล่ม`, `รถสวมทะเบียน`, `รถหนีภาษี`, `ยาเสพติด`, `อาวุธ`). Supply the real list or a different rule.
-- **Q3** How does a seller become "verified" — form checkbox (assumed) or admin-only?
+- **Q3** Resolved: "ผู้ขายยืนยันตัวตน" is the create/edit checkbox and is sent as `seller.isVerified`.
 - **Q4** Seller upsert key — assumed `phone` (unique). Same phone with a different name updates the seller's name/LINE/avatar.
 - **Q5** Error code and HTTP status for a duplicate title — assumed `T2H1006` / 400 with a field error (only two codes exist in Confluence).
 - **Q6** Max image size — assumed 5 MB per file.
 - **Q7** Test runner — assumed `node:test` (no extra dependency). Is Vitest/Jest + supertest allowed as a dev dependency instead?
-- **Q8** Should demo seed data include listings (with placeholder images generated locally), or only lookup data?
+- **Q8** Resolved: seed lookup data plus the demo listings in `database/derived-tables.md` (homepage names, including models that were missing from the starter list).
 
 ## Out of scope
 

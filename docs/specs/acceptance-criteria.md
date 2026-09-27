@@ -11,10 +11,10 @@ Source: Confluence [Acceptance Criteria](https://tripetchgroup-cdo.atlassian.net
 | AC-1.1 | Header shows logo "Truck2Hand" top-left and button "จัดการสินค้า" top-right; the button navigates to `/manage`. | manual |
 | AC-1.2 | Products render as a grid with 3–4 cards per row on desktop widths (≥1024px). | manual |
 | AC-1.3 | Each card shows, top to bottom: large cover image; title; small gray text `ยี่ห้อ \| รุ่น \| ปี`; price in large red text; seller avatar, seller name and green tag "ผู้ขายยืนยันตัวตน" (only when verified). | manual |
-| AC-1.4 | Bottom-right of each card has a LINE icon button and a phone icon button that open the seller's LINE URL and `tel:` link. | manual |
+| AC-1.4 | Bottom-right of each card has a LINE icon button and a phone icon button. The LINE button is always shown; clicking it shows "ติดต่อผู้ขายรายนี้ผ่าน LINE" and does not open a URL. The phone button opens a `tel:` link. | manual |
 | AC-1.5 | User can filter by vehicle type (4 ล้อ, 6 ล้อ, 10 ล้อ, หัวลาก). | api + manual |
 | AC-1.6 | User can filter by price range (min and/or max, inclusive). | api + manual |
-| AC-1.7 | User can filter by registration-year range (min and/or max, inclusive). | api + manual |
+| AC-1.7 | User can filter by ปีที่ผลิต range (min and/or max, inclusive). | api + manual |
 | AC-1.8 | User can filter by brand and by model. | api + manual |
 | AC-1.9 **(DoD)** | All filters can be combined in one request; results satisfy every active filter (AND). | api + manual |
 | AC-1.10 **(DoD)** | User can sort by newest, price (asc/desc) and most viewed. | api + manual |
@@ -32,9 +32,9 @@ Source: Confluence [Acceptance Criteria](https://tripetchgroup-cdo.atlassian.net
 | AC-2.3 | Left: largest image on top, thumbnails in a row below; clicking a thumbnail changes the large image. | manual |
 | AC-2.4 | Right top: title and price (large red text). | manual |
 | AC-2.5 | Full description is displayed (line breaks preserved). | manual |
-| AC-2.6 | Vehicle box shows ยี่ห้อ, รุ่น, ปีที่ผลิต. | api + manual |
+| AC-2.6 | Vehicle box shows ยี่ห้อ, รุ่น, ปีที่ผลิต. Do not require a breadcrumb or "โพสต์เมื่อ". | api + manual |
 | AC-2.7 | Seller box shows name, phone and LINE link. | api + manual |
-| AC-2.8 | Large buttons "ติดต่อผู้ขาย" and "แอดไลน์" at the bottom. | manual |
+| AC-2.8 | Large buttons "ติดต่อผู้ขาย" (`tel:`) and "แอดไลน์". "แอดไลน์" is always shown; clicking it shows "ติดต่อผู้ขายรายนี้ผ่าน LINE" and does not open a URL. | manual |
 | AC-2.9 | `GET /v1/api/products/:id` returns 404 `T2H1004` for an unknown id; the UI shows "ไม่พบสินค้านี้". | api + manual |
 | AC-2.10 **(DoD)** | Opening the detail page increments the product's view count by 1. | api |
 
@@ -47,9 +47,9 @@ Source: Confluence [Acceptance Criteria](https://tripetchgroup-cdo.atlassian.net
 | AC-3.3 | Table header: รูปภาพ \| ชื่อสินค้า \| ยี่ห้อ \| ราคา \| จัดการ. | manual |
 | AC-3.4 | Each row shows data matching the header, with a pencil (edit) and trash (delete) icon in "จัดการ". | manual |
 | AC-3.5 | Form accepts product images (.png, .jpg) — add and remove, maximum 4. | unit + api + manual |
-| AC-3.6 | Form has text inputs/textarea for ชื่อรถ, รายละเอียด, ราคา, ชื่อคนขาย, เบอร์โทร, ลิงก์ไลน์. | manual |
+| AC-3.6 | Form has text inputs/textarea for ชื่อรถ, รายละเอียด, ราคา, ชื่อคนขาย, เบอร์โทร, ลิงก์ไลน์ (optional), and checkbox "ผู้ขายยืนยันตัวตน". | manual |
 | AC-3.7 | Form has a seller profile image upload (.png, .jpg). | api + manual |
-| AC-3.8 | Form has dropdowns for ยี่ห้อ, รุ่น, ปีรถ (and ประเภทรถ, see REQUIREMENTS). | manual |
+| AC-3.8 | Form has dropdowns for ประเภทรถ, ยี่ห้อ, รุ่น (filtered by brand), and ปีที่ผลิต. | manual |
 | AC-3.9 | "ยกเลิก" closes the modal without saving; "บันทึกข้อมูล" saves to the system. | api + manual |
 | AC-3.10 | Create: valid body → 201 with the created record; the product appears on home and in the table. | api |
 | AC-3.11 | Edit: valid body → 200; changes appear on home, detail and table. | api |
@@ -66,6 +66,6 @@ Source: Confluence [Acceptance Criteria](https://tripetchgroup-cdo.atlassian.net
 | AC-V.4 | Title or description containing a prohibited keyword rejected. | unit + api |
 | AC-V.5 | 0 or more than 4 images, zero or multiple covers, or non-PNG/JPG upload rejected. | unit + api |
 | AC-V.6 | Unknown `vehicleTypeId` / `modelId` rejected. | unit + api |
-| AC-V.7 | Invalid phone or LINE URL format rejected. | unit + api |
+| AC-V.7 | Invalid phone or LINE URL format rejected. A missing LINE URL is allowed. | unit + api |
 | AC-V.8 | All errors use the error envelope; unexpected errors return 500 `T2H9999` without leaking stack traces. | api |
 | AC-V.9 | Form shows field-level messages for both client-side and server-side validation errors. | manual |
