@@ -1,0 +1,13 @@
+RCTC - Task
+========================
+
+Without a clear task
+------------------------
+Help me with this architecture https://github.com/motdotla/dotenv 
+
+
+
+With a clear task
+------------------------
+
+Analyze the architecture, identify the three highest-risk components, and recommend improvements for https://github.com/motdotla/dotenv 

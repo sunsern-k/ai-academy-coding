@@ -1,0 +1,16 @@
+RCTC - Role
+========================
+
+Without a role
+------------------------
+Explain the high-level function of this application https://github.com/motdotla/dotenv
+
+With a role
+------------------------
+Act as a Senior Software Security Researcher. Evaluate this source code and explain how it works from security perspectives https://github.com/motdotla/dotenv
+
+Bonus - exaplain software how it works for a junior staff
+------------------------
+Act as an empathetic and patient Senior Developer mentoring a Junior Developer who is new to this application and Node.js. 
+Evaluate this source code and explain how it works https://github.com/motdotla/dotenv
+

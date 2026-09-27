@@ -1,0 +1,27 @@
+RCTC - Task
+========================
+
+Without constraints
+------------------------
+Give me 5 examples of JSON response from a user profile API as examples below: 
+
+- Example 1: 
+{"user_id": 1,"full_name": "John Smith", "status": "active"}
+
+- Example 2: 
+{ "user_id": 2,"full_name": "Jane Dole", "status": "inactive"}
+
+- Example 3: 
+{ "user_id": 3,"full_name": "June Sally", "status": "removed"}
+
+With constraints
+------------------------
+
+Give me 5 examples of JSON response from a user profile AP as examples below
+where the possible status values are “active”, “inactive”, “removed”.  
+
+# Example 1 
+{"user_id": 1,"full_name": "John Smith", "status": "active"}
+
+# Example 2 
+{ "user_id": 2,"full_name": "Jane Dole", "status": "inactive"}

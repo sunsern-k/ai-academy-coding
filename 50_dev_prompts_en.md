@@ -1,0 +1,417 @@
+# 50 Software Development Prompts
+
+Each prompt uses a role action, context, task, and constraints.
+
+## Planning and requirements
+
+### 1. Product Manager
+
+**Serve as** a product manager.
+
+- **Context:** Stakeholder notes describe a proposed customer portal.
+- **Task:** Convert them into prioritized requirements, user outcomes, and success metrics.
+- **Constraints:** Use measurable acceptance criteria and identify assumptions.
+
+### 2. Business Analyst
+
+**Analyze the requirements as** a business analyst.
+
+- **Context:** A new payment workflow is being proposed.
+- **Task:** Identify business rules, edge cases, dependencies, and unresolved questions.
+- **Constraints:** Do not invent missing rules; list them as questions.
+
+### 3. Requirements Engineer
+
+**Review the specification as** a requirements engineer.
+
+- **Context:** The attached requirements will guide implementation and testing.
+- **Task:** Find ambiguity, inconsistency, and missing acceptance criteria.
+- **Constraints:** Rewrite requirements so each is testable.
+
+### 4. Domain Expert
+
+**Evaluate the workflow from the perspective of** a healthcare domain expert.
+
+- **Context:** The system processes patient appointments.
+- **Task:** Identify inaccurate terminology and workflow risks.
+- **Constraints:** Distinguish legal advice from general domain guidance.
+
+### 5. UX Researcher
+
+**Work as** a UX researcher.
+
+- **Context:** The team needs to validate a new onboarding journey.
+- **Task:** Create a research plan and interview questions.
+- **Constraints:** Avoid leading questions and define participant criteria.
+
+## Architecture and design
+
+### 6. Solution Architect
+
+**Design as** a solution architect.
+
+- **Context:** The platform must support 10,000 requests per second.
+- **Task:** Propose an end-to-end architecture and explain major trade-offs.
+- **Constraints:** Address scalability, availability, security, and cost.
+
+### 7. Software Architect
+
+**Advise as** a software architect.
+
+- **Context:** A growing application is currently a monolith.
+- **Task:** Compare a modular monolith with microservices.
+- **Constraints:** Base the recommendation on team size, deployment needs, and domain boundaries.
+
+### 8. Cloud Architect
+
+**Design the infrastructure as** a cloud architect.
+
+- **Context:** The application will run on AWS.
+- **Task:** Propose a multi-zone deployment and disaster-recovery design.
+- **Constraints:** Minimize operational complexity and estimate key cost drivers.
+
+### 9. Data Architect
+
+**Develop a data architecture as** a data architect.
+
+- **Context:** The system has transactional and analytical workloads.
+- **Task:** Define storage, data flows, ownership, and governance.
+- **Constraints:** Address retention, privacy, and consistency.
+
+### 10. API Designer
+
+**Design the contract as** an API designer.
+
+- **Context:** Clients need order-management operations.
+- **Task:** Produce REST resources, operations, errors, pagination, and versioning rules.
+- **Constraints:** Follow OpenAPI and backward-compatibility principles.
+
+### 11. Security Architect
+
+**Threat-model the design as** a security architect.
+
+- **Context:** The system uses token-based authentication.
+- **Task:** Identify threats and recommend mitigations.
+- **Constraints:** Use STRIDE and rank findings by severity.
+
+### 12. UI/UX Designer
+
+**Design the experience as** a UI/UX designer.
+
+- **Context:** Users need a checkout workflow.
+- **Task:** Describe the journey and interaction states.
+- **Constraints:** Cover loading, empty, validation, error, and accessibility states.
+
+## Implementation
+
+### 13. Frontend Developer
+
+**Implement the component as** a senior frontend developer.
+
+- **Context:** The application uses React and TypeScript.
+- **Task:** Build the supplied interface.
+- **Constraints:** Meet WCAG 2.2 AA, include tests, and avoid new dependencies.
+
+### 14. Backend Developer
+
+**Work as** a backend developer.
+
+- **Context:** An order API must support retries from clients.
+- **Task:** Implement the endpoint and domain logic.
+- **Constraints:** Include validation, authorization, idempotency, and transactional integrity.
+
+### 15. Full-Stack Developer
+
+**Deliver the feature as** a full-stack developer.
+
+- **Context:** The change affects the UI, API, and database.
+- **Task:** Implement the complete workflow.
+- **Constraints:** Preserve API compatibility and include automated tests.
+
+### 16. Database Engineer
+
+**Optimize the database as** a database engineer.
+
+- **Context:** The supplied query is slow in production.
+- **Task:** Diagnose the execution plan and recommend indexes or query changes.
+- **Constraints:** Avoid long table locks and provide rollback steps.
+
+### 17. Integration Engineer
+
+**Design the integration as** an integration engineer.
+
+- **Context:** The service calls an unreliable third-party API.
+- **Task:** Define request, failure, and recovery behavior.
+- **Constraints:** Include timeouts, retries, idempotency, rate limits, and dead-letter handling.
+
+### 18. Refactoring Specialist
+
+**Refactor the module as** a software-maintainability specialist.
+
+- **Context:** The module contains duplicated logic.
+- **Task:** Improve its structure.
+- **Constraints:** Preserve observable behavior and its public API.
+
+### 19. Modernization Engineer
+
+**Plan the modernization as** a legacy-system engineer.
+
+- **Context:** A legacy application must be replaced incrementally.
+- **Task:** Create a strangler-pattern migration plan.
+- **Constraints:** Maintain service continuity and define rollback points.
+
+### 20. AI/ML Engineer
+
+**Design the AI solution as** an AI/ML engineer.
+
+- **Context:** The product requires retrieval-augmented generation.
+- **Task:** Define ingestion, retrieval, generation, and evaluation.
+- **Constraints:** Address hallucinations, privacy, latency, and measurable quality.
+
+## Review and quality assurance
+
+### 21. Code Reviewer
+
+**Review the change as** a senior code reviewer.
+
+- **Context:** The provided diff is proposed for production.
+- **Task:** Find correctness, security, performance, and maintainability problems.
+- **Constraints:** Report only actionable findings with severity and evidence.
+
+### 22. QA Engineer
+
+**Test the feature as** a QA engineer.
+
+- **Context:** The supplied acceptance criteria define expected behavior.
+- **Task:** Create functional and non-functional test cases.
+- **Constraints:** Cover normal, boundary, failure, and recovery scenarios.
+
+### 23. Test Automation Engineer
+
+**Automate the tests as** a test automation engineer.
+
+- **Context:** The feature needs reliable continuous-integration coverage.
+- **Task:** Design and implement automated tests.
+- **Constraints:** Avoid fixed delays, shared state, and environment-dependent assumptions.
+
+### 24. Performance Engineer
+
+**Evaluate the system as** a performance engineer.
+
+- **Context:** Traffic is expected to increase tenfold.
+- **Task:** Create load, stress, and capacity tests.
+- **Constraints:** Define workloads, metrics, thresholds, and bottleneck-diagnosis methods.
+
+### 25. Accessibility Specialist
+
+**Audit the interface as** an accessibility specialist.
+
+- **Context:** The component must meet WCAG 2.2 AA.
+- **Task:** Identify violations and recommend fixes.
+- **Constraints:** Include keyboard, screen-reader, contrast, and focus behavior.
+
+### 26. Application Security Engineer
+
+**Audit the endpoint as** an application security engineer.
+
+- **Context:** The endpoint handles sensitive customer data.
+- **Task:** Find exploitable vulnerabilities.
+- **Constraints:** Check authorization, injection, exposure, validation, and abuse cases.
+
+### 27. Compliance Reviewer
+
+**Assess the workflow as** a compliance reviewer.
+
+- **Context:** Personal data from EU residents is processed.
+- **Task:** Map the workflow to GDPR obligations and identify gaps.
+- **Constraints:** Separate confirmed findings from items requiring legal review.
+
+## Documentation
+
+### 28. Technical Writer
+
+**Document the system as** a technical writer.
+
+- **Context:** A new API is ready for external developers.
+- **Task:** Create clear API documentation, examples, and troubleshooting guidance.
+- **Constraints:** Use consistent terminology, avoid undocumented assumptions, and ensure every example is executable.
+
+## Delivery and release
+
+### 29. DevOps Engineer
+
+**Build the delivery pipeline as** a DevOps engineer.
+
+- **Context:** The project requires automated build, test, and deployment.
+- **Task:** Define the CI/CD stages.
+- **Constraints:** Include caching, security scans, approvals, rollback, and secret management.
+
+### 30. Platform Engineer
+
+**Design the developer platform as** a platform engineer.
+
+- **Context:** Teams need self-service application deployment.
+- **Task:** Create a reusable deployment template.
+- **Constraints:** Provide secure defaults, observability, and controlled customization.
+
+### 31. Release Manager
+
+**Coordinate the release as** a release manager.
+
+- **Context:** Several teams contribute to the production release.
+- **Task:** Create a readiness and release checklist.
+- **Constraints:** Include owners, dependencies, validation, rollback, and communication.
+
+### 32. Site Reliability Engineer
+
+**Assess operational readiness as** an SRE.
+
+- **Context:** A new service is approaching production release.
+- **Task:** Define SLIs, SLOs, alerts, and rollback thresholds.
+- **Constraints:** Alerts must represent actionable customer impact.
+
+### 33. Change Manager
+
+**Evaluate the change as** a change manager.
+
+- **Context:** A production database migration is proposed.
+- **Task:** Prepare a risk and approval assessment.
+- **Constraints:** Include impact, validation, scheduling, communication, and rollback.
+
+## Day-2 operations
+
+### 34. Production Support Engineer
+
+**Investigate the issue as** a production support engineer.
+
+- **Context:** Users report intermittent API failures.
+- **Task:** Rank likely causes and propose diagnostic steps.
+- **Constraints:** Begin with non-destructive checks and preserve evidence.
+
+### 35. Incident Commander
+
+**Coordinate the response as** an incident commander.
+
+- **Context:** A critical customer-facing outage is active.
+- **Task:** Define priorities, owners, checkpoints, and communications.
+- **Constraints:** Focus first on service restoration and user impact.
+
+### 36. Incident Responder
+
+**Diagnose the outage as** an incident responder.
+
+- **Context:** Metrics and logs indicate elevated failures.
+- **Task:** Identify the failure domain and safest mitigation.
+- **Constraints:** Separate evidence, hypotheses, and confirmed conclusions.
+
+### 37. Observability Engineer
+
+**Design the telemetry as** an observability engineer.
+
+- **Context:** The service lacks production visibility.
+- **Task:** Define logs, metrics, traces, dashboards, and alerts.
+- **Constraints:** Avoid sensitive data and noisy, non-actionable alerts.
+
+### 38. Root-Cause Analyst
+
+**Conduct a blameless analysis as** a root-cause analyst.
+
+- **Context:** The incident timeline and evidence are provided.
+- **Task:** Determine root cause, contributing factors, and preventive actions.
+- **Constraints:** Avoid unsupported attribution and individual blame.
+
+### 39. Problem Manager
+
+**Analyze recurring incidents as** a problem manager.
+
+- **Context:** Several incidents have similar symptoms.
+- **Task:** Group common causes and prioritize permanent fixes.
+- **Constraints:** Rank actions by recurrence risk, impact, and effort.
+
+### 40. Capacity Planner
+
+**Forecast demand as** a capacity planner.
+
+- **Context:** Traffic and resource data cover the last 12 months.
+- **Task:** Estimate six-month capacity needs.
+- **Constraints:** State assumptions and define scaling thresholds.
+
+### 41. Cloud FinOps Engineer
+
+**Optimize spending as** a cloud FinOps engineer.
+
+- **Context:** Monthly cloud costs are increasing.
+- **Task:** Identify savings opportunities.
+- **Constraints:** Rank recommendations by savings, implementation effort, and reliability risk.
+
+### 42. Database Reliability Engineer
+
+**Diagnose the database as** a database reliability engineer.
+
+- **Context:** Production replication lag is increasing.
+- **Task:** Determine likely causes and mitigation steps.
+- **Constraints:** Minimize downtime and data-loss risk.
+
+### 43. Disaster Recovery Specialist
+
+**Plan recovery as** a disaster-recovery specialist.
+
+- **Context:** The organization must prepare for a regional outage.
+- **Task:** Create a recovery test plan.
+- **Constraints:** Validate stated RTO and RPO targets without disrupting production.
+
+### 44. Security Operations Analyst
+
+**Investigate the events as** a security operations analyst.
+
+- **Context:** Monitoring detected suspicious authentication activity.
+- **Task:** Assess severity and recommend containment.
+- **Constraints:** Preserve evidence and distinguish indicators from confirmed compromise.
+
+### 45. Vulnerability Manager
+
+**Prioritize remediation as** a vulnerability manager.
+
+- **Context:** A vulnerability scan produced the attached findings.
+- **Task:** Rank practical risk and assign remediation targets.
+- **Constraints:** Consider exploitability, exposure, asset value, and compensating controls.
+
+### 46. Patch and Upgrade Engineer
+
+**Plan the upgrade as** a patch and upgrade engineer.
+
+- **Context:** A runtime version is approaching end of support.
+- **Task:** Create an incremental upgrade plan.
+- **Constraints:** Include compatibility testing, staged rollout, monitoring, and rollback.
+
+### 47. Runbook Author
+
+**Document the procedure as** a runbook author.
+
+- **Context:** Operators need to handle elevated API latency.
+- **Task:** Write diagnostic, decision, escalation, and recovery steps.
+- **Constraints:** Make every step executable and define stop conditions.
+
+### 48. Technical Support Specialist
+
+**Triage the report as** a technical support specialist.
+
+- **Context:** A customer reported inconsistent application behavior.
+- **Task:** Produce reproduction steps and evidence requirements.
+- **Constraints:** Avoid assuming the cause and define escalation criteria.
+
+### 49. Knowledge Manager
+
+**Convert the resolution into guidance as** a knowledge manager.
+
+- **Context:** A production incident has been resolved.
+- **Task:** Create a reusable troubleshooting article.
+- **Constraints:** Remove sensitive information and include symptoms, diagnosis, resolution, and prevention.
+
+### 50. Chaos Engineer
+
+**Evaluate system resilience as** a chaos engineer.
+
+- **Context:** A distributed production service must tolerate infrastructure failures.
+- **Task:** Design controlled failure experiments and define expected recovery behavior.
+- **Constraints:** Establish safety limits, monitoring, abort conditions, approvals, and rollback procedures.

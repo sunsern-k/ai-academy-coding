@@ -1,0 +1,27 @@
+RCTC - Constraint (ข้อจำกัด)
+========================
+
+แบบไม่กำหนดข้อจำกัด
+------------------------
+ยกตัวอย่าง JSON response จาก user profile API ให้ฉัน 5 ตัวอย่าง โดยอ้างอิงจากตัวอย่างด้านล่าง:
+
+- ตัวอย่างที่ 1:
+{"user_id": 1,"full_name": "John Smith", "status": "active"}
+
+- ตัวอย่างที่ 2:
+{ "user_id": 2,"full_name": "Jane Dole", "status": "inactive"}
+
+- ตัวอย่างที่ 3:
+{ "user_id": 3,"full_name": "June Sally", "status": "removed"}
+
+แบบกำหนดข้อจำกัด
+------------------------
+
+ยกตัวอย่าง JSON response จาก user profile API ให้ฉัน 5 ตัวอย่าง โดยอ้างอิงจากตัวอย่างด้านล่าง
+และกำหนดให้ค่า status ที่เป็นไปได้มีเพียง “active”, “inactive” และ “removed”
+
+# ตัวอย่างที่ 1
+{"user_id": 1,"full_name": "John Smith", "status": "active"}
+
+# ตัวอย่างที่ 2
+{ "user_id": 2,"full_name": "Jane Dole", "status": "inactive"}
