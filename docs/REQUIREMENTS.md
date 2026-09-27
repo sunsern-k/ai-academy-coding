@@ -1,62 +1,170 @@
-# Requirements: Todo List
+# Requirements: Truck2Hand
 
-- **Application name:** Todo List
+- **Application name:** Truck2Hand — a used-truck marketplace (storefront + back-office)
+- **UI language:** Thai. Use the exact Thai UI copy in [§ UI copy](#ui-copy); do not translate or paraphrase it.
 
-This file is the product source of truth for `app-architect` and `app-builder`. Do not add features that are not listed here.
+This file is the product source of truth for `app-architect` and `app-builder`. **Do not add features that are not listed here or in the linked spec files.** When something is missing or ambiguous, follow the marked `ASSUMPTION` and record it in the build notes; do not invent new behaviour.
 
-## Stack
+## Context files (read before designing or coding)
 
-- **Vite + TypeScript** web app
-- Domain logic in a testable store module (e.g. `src/todoStore.ts`); thin UI on top
-- Persistence: browser **localStorage**
-- Tests: **Vitest** unit/integration only (jsdom/happy-dom is OK). No Playwright / E2E as the pass/fail source
+| File | What it defines | Origin |
+| --- | --- | --- |
+| [`docs/specs/acceptance-criteria.md`](docs/specs/acceptance-criteria.md) | Testable acceptance criteria per story (AC IDs) | Confluence: Acceptance Criteria |
+| [`docs/specs/definition-of-done.md`](docs/specs/definition-of-done.md) | Pinned stack, quality gates, demo script | Confluence: Definition of Done |
+| [`docs/specs/api/conventions.md`](docs/specs/api/conventions.md) | Base URL, errors, image URLs, Swagger | Confluence: API pages (shared notes) |
+| [`docs/specs/api/get-product-list.md`](docs/specs/api/get-product-list.md) | `GET /v1/api/products` | Confluence: (Example) GET Product List API |
+| [`docs/specs/api/post-create-product.md`](docs/specs/api/post-create-product.md) | `POST /v1/api/products` | Confluence: (Example) POST Create Product API |
+| [`docs/specs/api/derived-endpoints.md`](docs/specs/api/derived-endpoints.md) | Detail, update, delete, upload, views, lookups | **DERIVED** — needed by the stories, not in Confluence |
+| [`docs/specs/database/products.md`](docs/specs/database/products.md) | `products` table | Confluence: (Example) products |
+| [`docs/specs/database/derived-tables.md`](docs/specs/database/derived-tables.md) | `brands`, `models`, `vehicle_types`, `sellers`, `product_images` + seed data | **DERIVED** — referenced by the API pages, not specified in Confluence |
+
+## UI examples
+
+Use these UI examples as a guide for the desing UIs.
+
+- Home page: docs/specs/ui/homepage.png
+- Manage listing: docs/specs/ui/manage_listing.png
+- Listing details: docs/specs/ui/listing_details.png
+- Create a new listing: docs/specs/ui/create_a_new_listing.png
+- Confirmation to delete a listing: docs/specs/ui/confirmation_to_delete_a_listing.png
+
+### Precedence when files disagree
+
+1. `definition-of-done.md` (release gate)
+2. `acceptance-criteria.md`
+3. Confluence-origin API / database specs
+4. This file (product narrative, look and feel)
+5. `DERIVED` specs — lowest; they fill gaps only
+
+Known conflicts are already resolved inside the files and listed in [§ Resolved conflicts](#resolved-conflicts).
+
+## Stack (summary — exact versions in `definition-of-done.md`)
+
+- **Monorepo** with two packages: `frontend/` and `backend/`. Runtime **Node.js 24.20.0** (add `.nvmrc`).
+- **Frontend:** Vue 3 + vue-router + Vite. Plain CSS with custom properties. No UI kit, no CSS framework, no icon pack, no HTTP client library (use `fetch`).
+- **Backend:** Express 5 + Drizzle ORM on better-sqlite3 (SQLite file `backend/data/truck2hand.db`), multer for image upload, cors, swagger-ui-express at `/api-docs`.
+- **Ports:** backend `http://localhost:8080` (from the API spec), frontend Vite dev server `http://localhost:5173`.
+- **Dependencies are pinned exactly** (no `^`/`~`). No runtime dependency beyond the DoD list. `ASSUMPTION`: JavaScript (ES modules), not TypeScript, because TypeScript tooling is not in the pinned list.
+- **Backend layering:** `routes/` (HTTP only) → `services/` (validation + business rules, unit-tested) → `repositories/` (Drizzle queries). Keep business rules out of route handlers so they can be tested without HTTP.
+- **Tests:** backend unit + API tests with the built-in **`node:test`** runner and `node:assert` (no extra dependency; HTTP tests start the app on an ephemeral port and use global `fetch`). Tests use a fresh in-memory or temp-file SQLite database per test file. `npm test` in `backend/` is the pass/fail source. No Playwright / E2E as pass/fail source.
 
 ## Product
 
-- One list of todo **items** (not multiple named lists)
-- Users can **add**, **view**, **edit title**, **change status**, and **delete** items
-- Empty state when there are no items
+Three pages that link to each other (routes are `ASSUMPTION`s):
 
-## Item shape
+| Page | Route | Story |
+| --- | --- | --- |
+| Home — product grid with filters and sort | `/` | Story 1 |
+| Product detail | `/products/:id` | Story 2 |
+| Product management (back-office) | `/manage` | Story 3 |
 
-```ts
-{
-  id: string
-  title: string
-  status: "open" | "in progress" | "done"
-  createdAt: string // ISO-8601
-}
-```
+No authentication (the API is public per the Confluence notes). The back-office is reachable from the header button.
 
-- Title: required, trim whitespace, reject empty
-- Default status on create: `"open"`
+### Story 1 — Home (product grid)
+
+- **Header** on every storefront page: logo text "Truck2Hand" top-left (links to `/`), button "จัดการสินค้า" top-right (goes to `/manage`).
+- **Grid** of product cards, 3–4 per row on desktop (see responsive rules).
+- **Card**, top to bottom: large cover image → title → gray small meta line `ยี่ห้อ | รุ่น | ปี` → price in large red text → seller avatar + seller name + green badge "ผู้ขายยืนยันตัวตน" (shown only when `sellerIsVerified` is true) → bottom-right: LINE icon button and phone icon button.
+  - Clicking the card (image or title) opens `/products/:id`.
+  - Phone button → `tel:{sellerPhone}`. LINE button → opens `sellerLineUrl` in a new tab; hidden when `sellerLineUrl` is null. Clicking these buttons must not also navigate to detail.
+- **Filters** (all combinable at once, applied together): vehicle type (4 ล้อ, 6 ล้อ, 10 ล้อ, หัวลาก), price range (min/max), registration-year range (min/max), brand, model (model options depend on the selected brand). A "ล้างตัวกรอง" control resets all filters.
+- **Sort** dropdown: newest (default), price low→high, price high→low, most viewed.
+- Filter and sort state is kept in the URL query string so reload and back-navigation keep it.
+- **Pagination:** `ASSUMPTION` simple previous/next pager with "หน้า X / Y"; request `per_page=12` (fills 3- and 4-column rows).
+- **Empty state** when no products match: "ไม่พบสินค้าที่ตรงกับเงื่อนไข".
+- **Price format:** Thai baht with thousands separators, e.g. `฿1,480,000`.
+- The `q` title search exists in the API but there is **no search box** in the UI (not in the stories).
+
+### Story 2 — Product detail
+
+- Two columns: left gallery, right information.
+- **Left:** large main image on top; thumbnails in a row below; clicking a thumbnail swaps the main image. The cover image is shown first.
+- **Right:** title and price (large red) at top → full description (preserve line breaks) → vehicle box (ยี่ห้อ, รุ่น, ปีที่ผลิต) → seller box (ชื่อ, เบอร์โทรศัพท์, ลิงก์ Line) → large buttons at the bottom: "ติดต่อผู้ขาย" (`tel:` link) and "แอดไลน์" (LINE URL, hidden when null).
+- When the page opens, record one view (`POST /v1/api/products/:id/views`) — this feeds the "most viewed" sort.
+- Unknown id → "ไม่พบสินค้านี้" with a link back to home.
+
+### Story 3 — Product management (back-office)
+
+- Heading "ระบบจัดการสินค้า"; a link back to the storefront.
+- Primary button "+ สร้างรายการใหม่" opens the create modal.
+- **Table** columns: รูปภาพ | ชื่อสินค้า | ยี่ห้อ | ราคา | จัดการ. Row: cover thumbnail, title, brand, price, pencil button (edit → opens the same modal prefilled) and trash button (delete → confirm dialog "ยืนยันการลบสินค้านี้?" → hard delete). Sorted newest first, same pager as home.
+- **Modal form (create / edit):**
+  - Product images: PNG/JPG only, add and remove, **1–4 images**, exactly one marked as cover ("ตั้งเป็นภาพปก"); the first uploaded image is the cover by default; the cover can be changed when editing (DoD).
+  - Text inputs: ชื่อรถ, ราคา; textarea: รายละเอียด.
+  - Dropdowns: ประเภทรถ, ยี่ห้อ, รุ่น (filtered by brand), ปีรถ.
+  - Seller: avatar upload (PNG/JPG, optional), ชื่อคนขาย, เบอร์โทร, ลิงก์ไลน์, and checkbox "ผู้ขายยืนยันตัวตน" (`ASSUMPTION`: the API requires `seller.isVerified` but the story has no field for it).
+  - Footer buttons: "ยกเลิก" (close without saving) and "บันทึกข้อมูล" (save).
+  - Field errors appear under each field; server errors (e.g. duplicate title) are mapped to the same place. Save is disabled while the request is in flight.
+- `ASSUMPTION`: the vehicle-type dropdown is not in the Confluence form list but `vehicleTypeId` is required by the API and the home filter, so it is included.
+
+### Validation and error handling (from DoD)
+
+Enforced in the backend service layer (source of truth) and mirrored in the form for fast feedback. Full rules in [`api/post-create-product.md`](docs/specs/api/post-create-product.md#validation-rules).
+
+- Title required, trimmed, **unique** (case-insensitive, after trim) across listings.
+- Price is an integer from **1 to 99,999,999** THB; negative, zero, decimal or larger values are rejected.
+- **Prohibited listings:** title and description are checked against a configurable blocklist of Thai/English keywords (`backend/src/config/prohibited-keywords.js`); a match rejects the listing. See open question Q2.
+- 1–4 product images, exactly one cover, PNG/JPG only.
+- Every API error uses the error envelope in [`api/conventions.md`](docs/specs/api/conventions.md#errors); the UI never shows a raw stack trace.
 
 ## Look and feel
 
-The UI is part of the demo: it must look **professional and clean**, not a default unstyled page and not a flashy marketing site.
+Professional and clean marketplace, not a flashy marketing site.
 
-- **Theme:** one light theme only. Neutral page background, white content surface, dark text.
-- **Accent:** one primary color for the main action (add). Suggested: `#2563eb` (blue). Hover/focus uses a slightly darker shade of the same hue.
-- **Status colors** (text or small badge, not rainbow backgrounds): open = slate/gray, in progress = the primary blue, done = green (`#16a34a`).
-- **Type:** system UI stack (`system-ui`, `-apple-system`, `Segoe UI`, `sans-serif`). Clear hierarchy: app title, item title, secondary meta (`createdAt` smaller and muted).
-- **Layout:** centered column, max width ~40rem, comfortable padding and spacing between add form, list, and empty state.
-- **Components:** add form, item row (title, status control, edit, delete), empty state with a short calm message (e.g. “No todos yet”). Buttons are simple solid/outline; delete is a quiet danger style (red text or outline, not a large red block).
-- **Motion:** none required. **Do not** add animation libraries, loaders, confetti, parallax, or transitions longer than ~150ms. Instant state updates are preferred.
-- **Do not:** dark mode, gradients, glassmorphism, drop shadows beyond a light card shadow, icons packs unless already in the stack, extra fonts from the network.
+- **Theme:** one light theme only. Neutral page background, white card/surface, dark text.
+- **Colour tokens** (CSS custom properties on `:root`, used everywhere — no hard-coded colours in components):
 
-## Acceptance criteria (testable)
+| Token | Suggested value | Use |
+| --- | --- | --- |
+| `--color-bg` | `#f8fafc` | page background |
+| `--color-surface` | `#ffffff` | cards, table, modal |
+| `--color-text` | `#0f172a` | main text |
+| `--color-muted` | `#64748b` | meta line, secondary text |
+| `--color-border` | `#e2e8f0` | borders, dividers |
+| `--color-primary` | `#2563eb` (hover `#1d4ed8`) | "จัดการสินค้า", "+ สร้างรายการใหม่", "บันทึกข้อมูล", "ติดต่อผู้ขาย" |
+| `--color-price` | `#dc2626` | price text |
+| `--color-verified` | `#16a34a` | "ผู้ขายยืนยันตัวตน" badge |
+| `--color-line` | `#06c755` | LINE buttons |
+| `--color-danger` | `#dc2626` | delete — quiet style (red icon/outline, not a big red block) |
 
-- Add item: new item has `id`, trimmed `title`, status `"open"`, and `createdAt` (ISO-8601)
-- Reject empty or whitespace-only title on add and on edit
-- List/view all items
-- Edit title (valid update succeeds; invalid title is rejected)
-- Status can change among `"open"`, `"in progress"`, and `"done"`
-- Delete item removes it from the list
-- Persist and reload from `localStorage` (mock `localStorage` in unit tests)
-- Empty list is a valid state (empty UI / empty store)
-- UI uses a single light theme with CSS custom properties (or equivalent) for background, surface, text, primary, and status colors; the add control uses the primary color
-- No animation library dependency; no CSS `animation` / infinite keyframes for decorative motion
+- **Type:** system font stack with Thai fallbacks: `system-ui, -apple-system, "Segoe UI", "Leelawadee UI", "Thonburi", sans-serif`. No web fonts from the network. Hierarchy: page title > card/detail title > body > muted meta.
+- **Layout:** centered container, max width ~75rem, comfortable spacing. Cards have a light shadow at most; image area uses a fixed aspect ratio (4:3) with `object-fit: cover`.
+- **Icons:** LINE, phone, pencil, trash as small inline SVG components written in the repo. No icon library.
+- **Responsive:** grid 4 columns ≥1280px, 3 ≥1024px, 2 ≥640px, 1 below. Detail page stacks gallery above info below 768px. Management table scrolls horizontally inside its own container on small screens; the modal becomes full-screen below 640px.
+- **Motion:** none required. No animation libraries, loaders beyond a simple text "กำลังโหลด…", no transitions longer than ~150ms.
+- **Do not:** dark mode, gradients, glassmorphism, heavy shadows, carousels with auto-play, extra fonts.
+
+## UI copy
+
+Use these strings verbatim: `Truck2Hand`, `จัดการสินค้า`, `ผู้ขายยืนยันตัวตน`, `ติดต่อผู้ขาย`, `แอดไลน์`, `ระบบจัดการสินค้า`, `+ สร้างรายการใหม่`, `รูปภาพ`, `ชื่อสินค้า`, `ยี่ห้อ`, `รุ่น`, `ปี`, `ปีที่ผลิต`, `ราคา`, `จัดการ`, `ยกเลิก`, `บันทึกข้อมูล`, `ประเภทรถ`, `4 ล้อ`, `6 ล้อ`, `10 ล้อ`, `หัวลาก`. Strings marked `ASSUMPTION` above (empty states, confirm dialog, "ล้างตัวกรอง", "ตั้งเป็นภาพปก") may be adjusted by the product owner.
+
+## Resolved conflicts
+
+| # | Conflict | Resolution |
+| --- | --- | --- |
+| C1 | DoD requires sort by most viewed; GET list `sort_by` allows only `id, price, year, created_at` | Add `view_count` to `sort_by` and a `view_count` column (derived). |
+| C2 | POST example uses image paths `/images/products/…`; GET notes say files live in `uploads/` served at `/uploads/**` | Store paths as `/uploads/products/<file>` and `/uploads/sellers/<file>`; the POST example is treated as illustrative. |
+| C3 | Story says "ปีที่ผลิต" (detail) and "ปีจดทะเบียน" (filter); DB has one `year` column | One field `year` used for both labels. |
+| C4 | `products` table has no foreign keys, but the POST body carries `vehicleTypeId`, `modelId` and a seller | Add `vehicle_type_id`, `model_id`, `seller_id`, `view_count` (see `database/products.md` § Derived columns). |
+| C5 | Only two endpoints specified; Stories 2–3 need detail, update, delete, upload and dropdown data | Specified in `api/derived-endpoints.md`, reusing the same conventions. |
+
+## Open questions (confirm with product owner)
+
+Each has a working `ASSUMPTION` so the build is not blocked.
+
+- **Q1** Are the `DERIVED` endpoints and tables acceptable, or will Confluence pages be written for them?
+- **Q2** What counts as "สินค้าผิดกฎหมาย"? Current assumption: keyword blocklist (e.g. `รถไม่มีเล่ม`, `รถสวมทะเบียน`, `รถหนีภาษี`, `ยาเสพติด`, `อาวุธ`). Supply the real list or a different rule.
+- **Q3** How does a seller become "verified" — form checkbox (assumed) or admin-only?
+- **Q4** Seller upsert key — assumed `phone` (unique). Same phone with a different name updates the seller's name/LINE/avatar.
+- **Q5** Error code and HTTP status for a duplicate title — assumed `T2H1006` / 400 with a field error (only two codes exist in Confluence).
+- **Q6** Max image size — assumed 5 MB per file.
+- **Q7** Test runner — assumed `node:test` (no extra dependency). Is Vitest/Jest + supertest allowed as a dev dependency instead?
+- **Q8** Should demo seed data include listings (with placeholder images generated locally), or only lookup data?
 
 ## Out of scope
 
-Auth, backend, due dates, priority, filters, multiple lists, undo, sharing, dark mode, custom webfonts, animation libraries
+Authentication/roles, payments, chat, favourites, seller accounts, search box UI, multiple languages, dark mode, soft delete/undo, analytics beyond the view counter, stg/prd deployment (base URLs are TBD), web fonts, animation libraries.
+
+## Sources
+
+Confluence space TBW (AMATERASU), retrieved 2026-09-27: [Requirement](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5141364961/Requirement) (v3), [Acceptance Criteria](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5142872157/Acceptance+Criteria) (v1), [Definition of Done](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5143265326/Definition+of+Done) (v12), [POST Create Product API](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5143593233/Example+POST+Create+Product+API) (v2), [GET Product List API](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5143298279/Example+GET+Product+List+API) (v1), [products table](https://tripetchgroup-cdo.atlassian.net/wiki/spaces/TBW/pages/5143593246/Example+products) (v3).
