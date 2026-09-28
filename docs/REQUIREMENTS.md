@@ -173,7 +173,7 @@ Each has a working `ASSUMPTION` so the build is not blocked.
 - **Q5** Error code and HTTP status for a duplicate title — assumed `T2H1006` / 400 with a field error (only two codes exist in Confluence).
 - **Q6** Max image size — assumed 5 MB per file.
 - **Q7** Test runner — assumed `node:test` (no extra dependency). Is Vitest/Jest + supertest allowed as a dev dependency instead?
-- **Q8** Resolved: seed lookup data plus the demo listings in `database/derived-tables.md` (homepage names, including models that were missing from the starter list).
+- **Q8** Resolved: seed lookup data plus the demo listings in `database/derived-tables.md` (homepage names, including models that were missing from the starter list). Seed photo catalog: [`docs/specs/database/demo-listing-photos.md`](docs/specs/database/demo-listing-photos.md).
 
 ## Out of scope
 

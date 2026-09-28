@@ -72,7 +72,7 @@ Constraints: UNIQUE (`product_id`, `sort_order`); partial unique index `ON produ
 | VOLVO | FH |
 | SCANIA | R-Series |
 
-Demo listings (REQUIREMENTS Q8): 8 listings using the homepage names and the models added above. Every seller is verified and has a `https://line.me/` URL. Images are placeholder PNGs generated locally into `backend/uploads/` (no network downloads). Vehicle type is the value in this table; the create form sets it from the ประเภทรถ dropdown.
+Demo listings (REQUIREMENTS Q8): 8 listings using the homepage names and the models added above. Every seller is verified and has a `https://line.me/` URL. Each of the 8 listings has one cover JPEG from the [demo listing photo catalog](demo-listing-photos.md), copied at seed time to `/uploads/products/seed-product-N.jpg`. Seller avatars stay minimal PNGs. Seed matches a listing by its canonical title. Vehicle type is the value in this table; the create form sets it from the ประเภทรถ dropdown.
 
 | # | Title | Brand | Model | Year | Price (THB) | Seller | Vehicle type |
 | --- | --- | --- | --- | --- | --- | --- | --- |
