@@ -35,8 +35,8 @@ Load conflict and isolation rules from the contracts skill.
 
 1. Build the requested id list. Skip ids that are not `open`.
 2. If any pair conflicts, **do not start**. Return conflicting pairs, a wave plan, and tell the parent to run the safe subset (or serial).
-3. If all requested ids are non-conflicting: spawn one isolated `app-builder` worker per id in parallel. Each worker prompt: task id, worker role, `files` it may touch, write `docs/QA-REPORT-<id>.md`.
-4. When workers return, report each PASS/FAIL and QA path to the parent. Parent merges isolated worktrees if used, then spawns `app-architect` once with all new QA files.
+3. If all requested ids are non-conflicting, spawn one `app-builder` worker per id. Each worker prompt: task id, worker role, `files` it may touch, write `docs/QA-REPORT-<id>.md`. When the parent is `app-conductor`, use the same worktree. When the parent is the user chat, use an isolated worktree per worker.
+4. When workers return, report each PASS/FAIL and QA path to the parent. A manual parent merges isolated worktrees if used, then spawns `app-architect` once. `app-conductor` does not merge or commit. If you used other worktrees, list their paths and say they are unmerged.
 5. Never implement T1–Tn yourself in one process to “fake” parallelism.
 
 ## Implementation rules

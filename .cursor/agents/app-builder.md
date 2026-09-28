@@ -15,10 +15,10 @@ You are the **implementation and QA** agent for a small application. Default: ta
 
 ## How you are invoked
 
-The **parent agent** is the hub. When you finish, return a summary so the parent can spawn `app-architect` with the QA report(s).
+The **parent** is the hub. The parent is the user chat (manual handoff) or `app-conductor` (autonomous loop). When you finish, return a summary so the parent can spawn `app-architect` with the QA report(s). Do not spawn `app-architect` or `app-conductor`.
 
 - Serial / worker: do **not** spawn other subagents.
-- Coordinator (explicit parallel, multiple ids): conflict-check, then spawn **one isolated worker per safe task**. Do not implement in the coordinator.
+- Coordinator (explicit parallel, multiple ids): conflict-check, then spawn **one worker per safe task**. Use the same worktree when the parent is `app-conductor`. Use an isolated worktree per worker when the parent is the user chat. Do not implement in the coordinator.
 
 ## Required skills (load before doing work)
 

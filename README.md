@@ -2,7 +2,7 @@
 
 A hands-on demo of using Cursor agents to build a web application from a written brief.
 
-You stay in the chat and invoke two agents. **app-architect** reads the requirements and splits them into tasks. **app-builder** implements those tasks and writes a QA report. You send the architect back to read that report and mark the task done. The product they build is **Truck2Hand**, a marketplace for second-hand trucks.
+You start the loop with one message. **app-conductor** then spawns **app-architect** and **app-builder** until the task board is finished or a stop rule fires. You run the finished app, or you investigate when the loop stops early. The product they build is **Truck2Hand**, a marketplace for second-hand trucks.
 
 The application source is not in this repository yet. This tree is the brief, the UI references, and the agent setup.
 
@@ -13,13 +13,13 @@ Thai version: [README_TH.md](README_TH.md).
 Check out the exercise branch:
 
 ```text
-git switch agents-ex02
+git switch autonomous-agents-ex02
 ```
 
 - Open this repository in Cursor and use **Agent** chat.
-- Invoke the agents yourself with `/app-architect` and `/app-builder`. The handoff between them is manual: neither agent starts the other.
+- Start the loop with `/app-conductor`. The conductor spawns the architect and the builder. You do not call them for each task.
 - Node.js **24.20.0** is the runtime the brief pins (`.nvmrc` is created during the build). You need it when you run the finished app.
-- The agents create a git branch named `cursor/<slug>`. They do not commit or push unless you ask.
+- The architect creates a git branch named `cursor/<slug>`. The agents do not commit or push unless you ask.
 
 ## Repository structure
 
@@ -27,10 +27,12 @@ git switch agents-ex02
 .
 ├── .cursor/
 │   ├── agents/
+│   │   ├── app-conductor.md      # schedules architect and builder
 │   │   ├── app-architect.md      # design and task-board agent
 │   │   └── app-builder.md        # implementation and QA agent
 │   └── skills/
 │       ├── app-delivery-contracts/SKILL.md
+│       ├── app-conductor-playbook/SKILL.md
 │       ├── app-architect-playbook/SKILL.md
 │       └── app-builder-playbook/SKILL.md
 ├── docs/
@@ -46,10 +48,9 @@ An agent is a role Cursor can run as a subagent. Each file under `.cursor/agents
 
 | Agent | Invoke | What it does |
 | --- | --- | --- |
-| `app-architect` | `/app-architect` | Reads the requirements, writes the design and the task board, and later marks tasks done from QA reports. It does not write application code. |
-| `app-builder` | `/app-builder` | Implements **one** task, runs tests, and writes a QA report. It marks that task `implemented` only when tests pass. It does not mark tasks `done`. |
-
-Your chat is the coordinator. After the architect finishes, you start the builder. After the builder finishes, you start the architect again.
+| `app-conductor` | `/app-conductor` | Spawns the architect and the builder in turn. Writes `docs/LOOP.md`. Stops when the board is finished or a stop rule fires. It does not design or write application code. |
+| `app-architect` | Spawned by the conductor, or `/app-architect` | Reads the requirements, writes the design and the task board, and later marks tasks done from QA reports. It does not write application code or start the builder. |
+| `app-builder` | Spawned by the conductor, or `/app-builder` | Implements **one** task, runs tests, and writes a QA report. It marks that task `implemented` only when tests pass. It does not mark tasks `done` or start the architect. |
 
 ### Skills
 
@@ -57,62 +58,85 @@ A skill is a markdown playbook in `.cursor/skills/<name>/SKILL.md`. It is not an
 
 | Skill | Who reads it | What it is for |
 | --- | --- | --- |
-| `app-delivery-contracts` | Both agents | Which requirements file to use, the git branch name, which doc each agent may edit, and the rules for running tasks at the same time. |
+| `app-delivery-contracts` | All three agents | Which requirements file to use, the git branch name, which doc each agent may edit, and the rules for running tasks at the same time. |
+| `app-conductor-playbook` | `app-conductor` | How to hand off between the other two agents, what to store in `docs/LOOP.md`, and when to stop for a person. |
 | `app-architect-playbook` | `app-architect` | How to write `docs/DESIGN.md`, `docs/TASKS.md`, and `docs/RUN.md`, how to read a QA report, and the two-round fix limit. |
 | `app-builder-playbook` | `app-builder` | How to implement a single task, run tests once, and write `docs/QA-REPORT-<id>.md`. |
 
 ## How the demo runs
 
-### 1. Design
-
-Start with:
+### 1. Start the loop
 
 ```text
-/app-architect
+/app-conductor
 ```
 
-The architect reads `docs/REQUIREMENTS.md` (or another path if you pass one, for example `/app-architect docs/REQUIREMENTS.md`). On the first run it:
+The conductor reads `docs/REQUIREMENTS.md` unless you pass another path (`/app-conductor docs/REQUIREMENTS.md`). It spawns the architect, then the builder, then the architect again, one task at a time.
+
+On the first architect run the architect:
 
 - creates the app branch and writes `docs/GITBRANCH.md`
 - writes `docs/DESIGN.md` and `docs/TASKS.md`
 - records a start time in `docs/RUN.md`
-- tells you the next single task, and which task ids can run together
 
-Each task has an id (`T1`, `T2`, …), a `files` list, and `depends_on`. A dependency must be `implemented` or `done` before a later task starts.
+Each task has an id (`T1`, `T2`, …), a `files` list, and `depends_on`. A dependency must be `implemented` or `done` before a later task starts. The conductor writes every handoff to `docs/LOOP.md` (phase, board snapshot, and a handoff log). That file is how a stopped session resumes.
 
-### 2. Build
+For each task the builder implements only that task’s files, runs the tests once, and writes `docs/QA-REPORT-<id>.md`. A pass sets the task to `implemented`. The architect then sets it to `done`, or adds a fix task (`T1-FIX1`, then at most `T1-FIX2`). The conductor runs that fix task next. The loop does not commit.
 
-Default is one task:
+### 2. Optional kickoff flags
 
-```text
-/app-builder Implement T1
-```
-
-To run every task the architect marked as safe together, copy those ids and say they should run at the same time:
+Pause after the task board exists, so you can read it before any code is written:
 
 ```text
-/app-builder Implement T2, T3, and T5 at the same time
+/app-conductor pause after design
 ```
 
-`in parallel` means the same thing. Name the ids from the architect’s wave. Tasks that depend on unfinished work, or that edit the same files, stay in a later round. The builder will refuse that set and tell you which ids can go together.
-
-For each task the builder implements only that task’s files, runs the tests once, and writes `docs/QA-REPORT-<id>.md`. A pass sets the task to `implemented`. A fail leaves it open.
-
-### 3. Accept the work
-
-Send the architect back in:
+`review the plan first` and `stop after the task board` mean the same pause. When you are ready:
 
 ```text
-/app-architect Review the new QA reports and update the task board
+/app-conductor continue
 ```
 
-On a pass it sets the task to `done`. On a fail it adds a fix task (`T1-FIX1`, then at most `T1-FIX2`). You run `/app-builder` on that fix task, then `/app-architect` again. After two failed fix rounds the architect marks the original task `failed` and stops that line of work.
+Serial is the default. To let the conductor run a wave of tasks the architect marked as safe together:
 
-Repeat steps 2 and 3 until the board has no `open` or `implemented` tasks. The architect then writes the end time, duration, and **How to run** into `docs/RUN.md`.
+```text
+/app-conductor allow parallel
+```
+
+An open fix task still runs alone. If a parallel wave leaves unmerged worktrees, the conductor stops. It does not merge or commit.
+
+### 3. When the loop stops
+
+| Stop reason | What happened | What you do |
+| --- | --- | --- |
+| `board complete` | Every task is `done`, or nothing is left `open` or `implemented`. | Read **How to run** in `docs/RUN.md` and try the app. |
+| `fix limit` | A task still failed after `FIX2`. The rest of the board does not continue. | Read `docs/LOOP.md`, that task’s QA report, and its notes. |
+| `paused after design` | The board exists and no builder has run. | Read `docs/TASKS.md`, then `/app-conductor continue`. |
+| `no progress` | The board did not change after a handoff, or no task was eligible. | Read the handoff log in `docs/LOOP.md`. |
+| `handoff cap` | The builder was started three times for one original task. | Same as a fix-limit investigation. |
+| `scope expanded` | A new feature task appeared after the design. | Read `docs/TASKS.md`. |
+| `missing QA report` | The builder finished without a QA file. | Read the builder’s last reply and `docs/LOOP.md`. |
+| `parallel merge failed` | A parallel wave used other worktrees. | The log lists the paths. Do not expect a merge commit. |
+
+A session that dies mid-loop leaves **phase** as `design`, `build`, or `qa`. Start again with `/app-conductor continue`. If **phase** is `stopped`, the conductor waits until you say the investigation is done, for example `/app-conductor continue after investigation`.
+
+The conductor does not start the dev server. Checking the screens in a browser is your step, after `board complete`.
 
 ### 4. Run the application
 
-When every task is `done` (or the board has stopped after the fix limit), follow **How to run** in `docs/RUN.md`. That section is also copied into `docs/DESIGN.md`. Use those commands to install dependencies, run tests, and start the app. Do this only after the board is complete.
+When the stop reason is `board complete`, follow **How to run** in `docs/RUN.md`. That section is also copied into `docs/DESIGN.md`. Use those commands to install dependencies, run tests, and start the app.
+
+### Manual handoff
+
+You can still call the other two agents yourself. Neither starts the other.
+
+```text
+/app-architect
+/app-builder Implement T1
+/app-architect Review the new QA reports and update the task board
+```
+
+On a pass the architect sets the task to `done`. On a fail it adds `T1-FIX1`, then at most `T1-FIX2`. In this manual path you choose whether to continue other tasks after a fix line stops. The conductor path stops the whole run instead.
 
 ### Task status
 
@@ -121,7 +145,7 @@ When every task is `done` (or the board has stopped after the fix limit), follow
 | `open` | Not built yet, or a new fix task. |
 | `implemented` | Builder finished and tests passed. Waiting for the architect. |
 | `done` | Architect accepted a passing QA report. |
-| `failed` | QA still failed after two fix rounds. |
+| `failed` | QA failed for that row. A fix task (`FIX1`, then `FIX2`) may still be open. The conductor stops the whole run only after `FIX2` is `failed`. |
 
 ## The application
 
@@ -186,6 +210,7 @@ The full list is the table “Screenshot differences” in `docs/REQUIREMENTS.md
 | `docs/DESIGN.md` | Architect | Modules, data, UI, and how to run |
 | `docs/TASKS.md` | Architect owns the board; a builder may set only its own task to `implemented` | The task board |
 | `docs/RUN.md` | Architect | Start and end time, QA log, summary, and how to run |
+| `docs/LOOP.md` | Conductor | Phase, stop reason, board snapshot, and handoff log |
 | `docs/QA-REPORT-<id>.md` | Builder | Test result for that task |
 
 After the board is complete, follow **How to run** in `docs/RUN.md` to install, test, and open the app.

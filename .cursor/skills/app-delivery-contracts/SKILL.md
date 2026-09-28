@@ -1,9 +1,10 @@
 ---
 name: app-delivery-contracts
 description: >-
-  Shared file contract for app-architect and app-builder: requirements
-  path resolution, GITBRANCH.md schema, who owns DESIGN/TASKS/RUN/QA.
-  Use whenever those subagents run or when maintaining the docs/ delivery loop.
+  Shared file contract for app-architect, app-builder, and app-conductor:
+  requirements path resolution, GITBRANCH.md schema, who owns
+  DESIGN/TASKS/RUN/QA/LOOP. Use whenever those subagents run or when
+  maintaining the docs/ delivery loop.
 ---
 
 # App delivery contracts
@@ -37,8 +38,17 @@ Use a posix, repo-relative path. Persist it in `docs/GITBRANCH.md` so the builde
 | `docs/DESIGN.md` | Architect | Modules, data, UI, stack usage, **How to run** |
 | `docs/TASKS.md` | Architect owns the board; each builder worker may set **only its assigned task** to `implemented` | Task board (`files`, `depends_on`) |
 | `docs/RUN.md` | Architect | Run start/end, QA log, board-complete summary |
+| `docs/LOOP.md` | Conductor | Phase, stop reason, board snapshot, handoff log |
 | `docs/QA-REPORT.md` | Builder (serial only) | Last serial test run |
 | `docs/QA-REPORT-<id>.md` | Builder worker for that task id | Parallel (and allowed for serial) per-task QA |
+
+## Conductor
+
+`app-conductor` is the parent when the user starts an autonomous run. It spawns `app-architect` and `app-builder`. It writes only `docs/LOOP.md`. It does not design, implement, merge, commit, or push.
+
+The user chat remains a valid parent for a manual handoff (`/app-architect`, then `/app-builder`). Architect and builder still do not spawn each other, except the builder coordinator spawning isolated builder workers.
+
+Default autonomous mode is serial. The conductor passes several task ids to one builder coordinator only when the kickoff said `allow parallel`. Prefer the same worktree when `files` are disjoint so the wave needs no merge. If workers used other worktrees and they are not already on the app branch, the conductor stops. It does not merge or commit.
 
 ## Parallel builders (explicit only)
 
@@ -53,8 +63,9 @@ Default is **one builder worker = one task**. Parallel runs happen only when the
 **Isolation:**
 
 - Spawn **one `app-builder` worker per non-conflicting id** in the same parent turn (parallel Task calls).
-- Prefer **isolated git worktrees** (or Cursor isolated subagent environments) when more than one worker runs, so `docs/TASKS.md` and `src/` cannot clobber each other. Those copies are ephemeral; they are not extra product feature branches. After workers return, the parent merges onto the app branch from `docs/GITBRANCH.md` before spawning `app-architect`.
-- If isolation is unavailable **and** `files` are disjoint: same worktree is allowed. Each worker may edit only its `files` list, only its row in `docs/TASKS.md`, and only `docs/QA-REPORT-<id>.md`. Never write another worker’s sources or `docs/QA-REPORT.md` in a parallel wave.
+- A **manual** parent prefers isolated git worktrees so workers cannot clobber `docs/TASKS.md` or `src/`. Those copies are ephemeral; they are not extra product feature branches. After workers return, that parent merges onto the app branch from `docs/GITBRANCH.md` before spawning `app-architect`.
+- When the parent is `app-conductor`, prefer the **same worktree** if `files` are disjoint. The conductor does not merge or commit. If workers used other worktrees, report the paths as unmerged and stop.
+- On a shared worktree, each worker may edit only its `files` list, only its row in `docs/TASKS.md`, and only `docs/QA-REPORT-<id>.md`. Never write another worker’s sources or `docs/QA-REPORT.md` in a parallel wave.
 
 **Coordinator vs worker:** a single `/app-builder` invocation that received multiple ids + “parallel” is the **coordinator**: conflict-check, spawn isolated workers, do not implement. A worker prompt names **exactly one** task id and must not spawn further subagents.
 

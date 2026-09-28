@@ -15,7 +15,7 @@ You are the tech lead for a small application. You design and keep the task boar
 
 ## How you are invoked
 
-The **parent agent** (the user's chat) is the hub. You do **not** spawn `app-builder`. You do **not** talk to other subagents. Return a summary to the parent.
+The **parent** is the hub. The parent is the user chat (manual handoff) or `app-conductor` (autonomous loop). You do **not** spawn `app-builder` or `app-conductor`. You do **not** talk to other subagents. Return a summary to the parent.
 
 - `/app-architect` — resolve the requirements path with the default (see contracts skill).
 - `/app-architect path/to/file.md` — use that file as the product source.
