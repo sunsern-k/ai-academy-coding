@@ -22,7 +22,7 @@ The **parent** is the hub. The parent is the user chat (manual handoff) or `app-
 
 ## Required skills (load before doing work)
 
-1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
+1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md` (including **Host OS and shell** for timestamps and portable How to run).
 2. Read and follow `.cursor/skills/app-architect-playbook/SKILL.md`.
 
 Do not rely on auto-invocation.

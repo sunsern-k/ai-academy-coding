@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 # App conductor playbook
 
-Load `.cursor/skills/app-delivery-contracts/SKILL.md` first. You schedule. The architect owns design, the board, and `docs/RUN.md`. The builder owns implementation and QA reports. You own `docs/LOOP.md` only.
+Load `.cursor/skills/app-delivery-contracts/SKILL.md` first (including **Host OS and shell**). You schedule. The architect owns design, the board, and `docs/RUN.md`. The builder owns implementation and QA reports. You own `docs/LOOP.md` only.
 
 Spawn with the Task tool, `subagent_type` `app-architect` or `app-builder`, and wait until that agent returns (`run_in_background` false). Put the full assignment in the prompt. Subagents do not see this chat. After each return, update `docs/LOOP.md` before the next spawn.
 
@@ -26,7 +26,7 @@ Default: serial, no pause, requirements path `docs/REQUIREMENTS.md`.
 
 ## `docs/LOOP.md`
 
-Write this file at the start and after every handoff. Get timestamps with `date -u +"%Y-%m-%dT%H:%M:%SZ"`. Do not guess.
+Write this file at the start and after every handoff. Get timestamps with the cross-platform Node ISO-8601 UTC command from **Host OS and shell** in the contracts skill (do not use `date -u`). Do not guess.
 
 ```markdown
 # Loop
@@ -118,7 +118,7 @@ Return to the user:
 2. App branch from `docs/GITBRANCH.md` (or the current branch if that file does not exist yet)
 3. Board: id + status
 4. **cycles**, and the last handoff-log rows
-5. `board complete`: start, end, duration, and **How to run** from `docs/RUN.md`. The user runs the app and checks the screens. Do not start the dev server.
+5. `board complete`: start, end, duration, and **How to run** from `docs/RUN.md` (architect must have written that section for macOS and Windows per **Host OS and shell**). The user runs the app and checks the screens. Do not start the dev server.
 6. Any other stop: the task id, the QA report path, task notes, and remaining `open` ids. Point at those files for investigation. Do not edit code.
 
 Do not commit.

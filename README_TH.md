@@ -18,7 +18,8 @@ git switch autonomous-agents-ex02
 
 - เปิดรีพอซิทอรีนี้ใน Cursor แล้วใช้แชต **Agent**
 - เริ่มลูปด้วย `/app-conductor` conductor จะเรียก architect และ builder คุณไม่ต้องเรียกทั้งสองตัวเองทุกงาน
-- Node.js **24.20.0** คือรันไทม์ที่โจทย์กำหนด (ไฟล์ `.nvmrc` จะถูกสร้างระหว่างการพัฒนา) ต้องมีเมื่อจะรันแอปที่สร้างเสร็จแล้ว
+- Node.js **24.20.0** คือรันไทม์ที่โจทย์กำหนด (ไฟล์ `.nvmrc` จะถูกสร้างระหว่างการพัฒนา) ต้องมีเมื่อจะรันแอปที่สร้างเสร็จแล้ว บน macOS/Linux ใช้ nvm หรือ fnm กับ `.nvmrc` บน Windows ใช้ nvm-windows, fnm หรือตัวติดตั้งทางการในเวอร์ชันเดียวกัน
+- การติดตั้งแบ็กเอนด์คอมไพล์ `better-sqlite3`: บน macOS ต้องมี Xcode Command Line Tools บน Windows ต้องมี Visual Studio Build Tools (C++) เอเจนต์จะบันทึกไว้ใน **How to run**
 - architect จะสร้างกิตบรานช์ชื่อ `cursor/<slug>` เอเจนต์จะไม่ commit หรือ push จนกว่าคุณจะสั่ง
 
 ## โครงสร้างรีพอซิทอรี

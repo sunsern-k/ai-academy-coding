@@ -8,7 +8,7 @@ description: >-
 
 # App architect playbook
 
-Load `.cursor/skills/app-delivery-contracts/SKILL.md` first. Requirements path, `docs/GITBRANCH.md`, and git branch commands live there. Below, “the resolved requirements file” means that path (also stored as `requirements` in `docs/GITBRANCH.md`).
+Load `.cursor/skills/app-delivery-contracts/SKILL.md` first. Requirements path, `docs/GITBRANCH.md`, git branch commands, and **Host OS and shell** (timestamps, portable setup/run docs) live there. Below, “the resolved requirements file” means that path (also stored as `requirements` in `docs/GITBRANCH.md`).
 
 ## Task board format (`docs/TASKS.md`)
 
@@ -37,7 +37,7 @@ Meaning:
 
 You own the wall-clock for this delivery. Subagents do not share memory, so **persist it in `docs/RUN.md`**.
 
-Get timestamps with a shell command, not by guessing: `date -u +"%Y-%m-%dT%H:%M:%SZ"` (UTC ISO-8601).
+Get timestamps with a shell command, not by guessing. Use the cross-platform Node ISO-8601 UTC command from **Host OS and shell** in the contracts skill (do not use `date -u`).
 
 **First prompt (start):** on the first design run, if `docs/RUN.md` is missing or has no **start**, write the file and set **start** to now. Never change **start** on later runs.
 
@@ -86,7 +86,7 @@ Summary must include:
 - How many QA attempts ran, how many **FAIL**, how many **PASS**
 - Test cases: how many **failed before** (sum of `failed` + `missing` on FAIL attempts, and failed counts on earlier runs) vs **how many now passed** (passed count on the latest PASS report, or on the final report if the board stopped failed)
 - One line per original task: `done` on first QA vs needed `FIX1`/`FIX2`
-- **How to run the app** so a human can try it (from `docs/DESIGN.md`; typical: install, `npx vitest run`, `npm run dev` / Vite URL). If DESIGN is missing the section, infer from `package.json` scripts and write it into both DESIGN and RUN.
+- **How to run the app** so a human can try it (from `docs/DESIGN.md`). Follow **Host OS and shell** in the contracts skill: Node **24.20.0** (`.nvmrc` + Windows equivalent), `npm install` in `backend/` and `frontend/`, test via the resolved requirements (Truck2Hand: `npm test` in `backend/` with `node:test` — not Vitest), start both apps, note ports (e.g. `8080` / `5173`), and note native build tools for `better-sqlite3` on macOS vs Windows. If DESIGN is missing the section, infer from `package.json` scripts and write it into both DESIGN and RUN.
 
 ## When invoked: first design
 
@@ -95,7 +95,7 @@ If `docs/TASKS.md` is missing or empty:
 1. Resolve the requirements path (contracts skill). Confirm the file and **Application name**.
 2. Create/check out the git branch and write `docs/GITBRANCH.md` (include `requirements`).
 3. Record **start** in `docs/RUN.md` (see **Run clock and QA stats**).
-4. Write `docs/DESIGN.md` from the resolved requirements file (modules, data, persistence, UI, file layout). Include a **How to run** section (install, test once, start the app). Point at the branch file; do not invent a second branch name.
+4. Write `docs/DESIGN.md` from the resolved requirements file (modules, data, persistence, UI, file layout). Include a **How to run** section (install, test once, start the app) that works for macOS and Windows per **Host OS and shell**. Point at the branch file; do not invent a second branch name.
 5. Split work into **small tasks**. Prefer: domain/store + validation → persistence → UI, using `depends_on` for real order. Set disjoint `files` per task so an explicit parallel request can run a safe wave. Include a test-runner setup task only if the repo has no runner yet.
 6. Return to the parent: branch name, resolved requirements path, start time, design summary, task ids, `depends_on` / `files`, the default **next single task**, and which ids are **parallel-safe** together (no overlap, dependencies satisfied).
 

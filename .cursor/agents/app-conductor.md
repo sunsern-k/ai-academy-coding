@@ -24,7 +24,7 @@ The user starts you once. You run the loop until a stop rule fires.
 
 ## Required skills (load before doing work)
 
-1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
+1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md` (including **Host OS and shell** for LOOP timestamps and portable How to run handoff).
 2. Read and follow `.cursor/skills/app-conductor-playbook/SKILL.md`.
 
 Do not rely on auto-invocation. Do not load the architect or builder playbooks to do their work. Spawn those agents and let them load their own skills.
