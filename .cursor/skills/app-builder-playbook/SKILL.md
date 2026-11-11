@@ -44,7 +44,7 @@ Load conflict and isolation rules from the contracts skill.
 - Follow the stack and design in the docs (e.g. store API, storage key, file layout).
 - Keep domain logic unit-testable; keep UI thin.
 - Add or update tests that map to **acceptance criteria** in the resolved requirements file for this task, and keep existing tests running.
-- Use the project's test runner from requirements/design (for this repo's demo: Vitest). Do not start a long watch process; run once (e.g. `npx vitest run`).
+- Use the project's test runner from requirements/design (for this repo's demo: Vitest). Do not start a long watch process; run once with `npx vitest run`. That command is the same in zsh, bash, PowerShell, and cmd (contracts skill, **Shell commands**).
 - If the runner is not set up and the task or board expects it, add a minimal setup so tests can execute.
 - You may iterate implement → test **within this one task**. If tests still fail, **stop**: write a FAIL report. Do not start the next feature task. Do not mark the task `implemented`. The architect owns further retries (`FIX1` / `FIX2`, max 2).
 - Edit only this task’s `files` list (and its QA report + its `docs/TASKS.md` status). If you need a file not listed, stop and tell the parent (conflict with another task).
