@@ -25,6 +25,8 @@ The **parent agent** is the hub. When you finish, return a summary so the parent
 1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
 2. Read and follow `.cursor/skills/app-builder-playbook/SKILL.md`.
 
+Run install, test, and dev with the commands in **Shell commands** in the contracts skill. Use the same commands on Windows and macOS.
+
 Do not rely on auto-invocation.
 
 ## Requirements path
