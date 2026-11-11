@@ -60,11 +60,21 @@ Default is **one builder worker = one task**. Parallel runs happen only when the
 
 ## Shell commands (Windows and macOS)
 
-Pick the command from the **shell that is actually running**. Do not assume macOS. Cursor on macOS is usually zsh; Cursor on Windows is usually PowerShell. Git Bash on Windows is bash, so it uses the Unix commands.
+Do not assume macOS. Detect the host and shell before choosing a non-Node command:
+
+- Host: `node -p "process.platform"` (`darwin` / `win32` / `linux`), or `$env:OS` in PowerShell, or `uname` on Unix.
+- Shell: Cursor on macOS is usually zsh; Cursor on Windows is usually PowerShell (`$PSVersionTable`). Git Bash on Windows is bash.
 
 ### UTC timestamps
 
-Never guess a timestamp. Do not run `date -u` in PowerShell: there `date` is `Get-Date`, and `-u` fails.
+Never guess a timestamp. **Prefer Node** when it is on `PATH` (same on macOS and Windows):
+
+```bash
+node -e "console.log(new Date().toISOString().replace(/\.\d{3}Z$/,'Z'))"
+node -e "const d=new Date(); const p=n=>String(n).padStart(2,'0'); console.log(d.getUTCFullYear()+p(d.getUTCMonth()+1)+p(d.getUTCDate())+'T'+p(d.getUTCHours())+p(d.getUTCMinutes())+p(d.getUTCSeconds())+'Z')"
+```
+
+If Node is unavailable, use the form for the **shell that is actually running**. Do not run `date -u` in PowerShell: there `date` is `Get-Date`, and `-u` fails.
 
 **bash, zsh, or sh** (macOS, Linux, Git Bash):
 
@@ -126,7 +136,7 @@ From **Application name** in the resolved requirements file:
 3. **Uniqueness (new branch only):** before creating a branch, check whether that name already exists **locally or on remotes**:
    - `git branch --list --all -- "<name>"` and `git branch --list --all -- "*/<name>"` (see **Shell commands**). An exact local ref check is `git show-ref --verify --quiet "refs/heads/<name>"`.
    - If the base name is **free**, use it.
-   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is the compact UTC timestamp for the current shell (see **Shell commands**; example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
+   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is the compact UTC timestamp from **Shell commands** (prefer Node; example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
 4. If `docs/GITBRANCH.md` already records a `branch` field, **reuse that name** (later runs). Do not invent another unique name.
 
 ## Git (architect, first kickoff)

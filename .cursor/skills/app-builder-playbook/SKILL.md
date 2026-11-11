@@ -48,7 +48,7 @@ Load conflict and isolation rules from the contracts skill.
 - If the runner is not set up and the task or board expects it, add a minimal setup so tests can execute.
 - You may iterate implement → test **within this one task**. If tests still fail, **stop**: write a FAIL report. Do not start the next feature task. Do not mark the task `implemented`. The architect owns further retries (`FIX1` / `FIX2`, max 2).
 - Edit only this task’s `files` list (and its QA report + its `docs/TASKS.md` status). If you need a file not listed, stop and tell the parent (conflict with another task).
-- If you add or change start/test scripts, update **How to run** in `docs/DESIGN.md`.
+- If you add or change start/test scripts, update **How to run** in `docs/DESIGN.md` using the **Shell commands** format (separate lines, no `&&`, same on macOS and Windows).
 
 ## After you finish (always write a QA report)
 

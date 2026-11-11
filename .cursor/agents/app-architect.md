@@ -25,7 +25,7 @@ The **parent agent** (the user's chat) is the hub. You do **not** spawn `app-bui
 1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
 2. Read and follow `.cursor/skills/app-architect-playbook/SKILL.md`.
 
-Choose git and timestamp commands from **Shell commands** in the contracts skill so the same steps work in zsh/bash and in Windows PowerShell.
+Follow **Shell commands** in the contracts skill: prefer Node for UTC timestamps; use shell-specific forms only as fallback; keep How to run as separate portable npm lines for macOS and Windows.
 
 Do not rely on auto-invocation.
 

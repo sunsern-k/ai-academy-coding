@@ -25,7 +25,7 @@ The **parent agent** is the hub. When you finish, return a summary so the parent
 1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
 2. Read and follow `.cursor/skills/app-builder-playbook/SKILL.md`.
 
-Run install, test, and dev with the commands in **Shell commands** in the contracts skill. Use the same commands on Windows and macOS.
+Run install, test, and dev with the commands in **Shell commands** in the contracts skill. Prefer Node for QA timestamps when needed. Use the same npm lines on Windows and macOS; keep How to run as separate commands (no `&&`).
 
 Do not rely on auto-invocation.
 

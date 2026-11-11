@@ -37,7 +37,7 @@ Meaning:
 
 You own the wall-clock for this delivery. Subagents do not share memory, so **persist it in `docs/RUN.md`**.
 
-Get timestamps with a shell command, not by guessing. Use the ISO UTC command for the shell that is running (contracts skill, **Shell commands**). On bash/zsh that is `date -u +"%Y-%m-%dT%H:%M:%SZ"`. In PowerShell do not run `date -u`.
+Get timestamps with a shell command, not by guessing. Prefer the Node ISO-8601 UTC one-liner from **Shell commands** in the contracts skill. If Node is unavailable, use the form for the shell that is running. Never run `date -u` in PowerShell.
 
 
 **First prompt (start):** on the first design run, if `docs/RUN.md` is missing or has no **start**, write the file and set **start** to now. Never change **start** on later runs.
@@ -87,7 +87,7 @@ Summary must include:
 - How many QA attempts ran, how many **FAIL**, how many **PASS**
 - Test cases: how many **failed before** (sum of `failed` + `missing` on FAIL attempts, and failed counts on earlier runs) vs **how many now passed** (passed count on the latest PASS report, or on the final report if the board stopped failed)
 - One line per original task: `done` on first QA vs needed `FIX1`/`FIX2`
-- **How to run the app** so a human can try it (from `docs/DESIGN.md`; typical: install, `npx vitest run`, `npm run dev` / Vite URL). If DESIGN is missing the section, infer from `package.json` scripts and write it into both DESIGN and RUN.
+- **How to run the app** so a human can try it (from `docs/DESIGN.md`). Follow **Shell commands** in the contracts skill: three separate lines (`npm install`, then the test command from requirements — for this demo `npx vitest run` — then `npm run dev`), no `&&`, and the Vite URL (default `http://localhost:5173`). If DESIGN is missing the section, infer from `package.json` scripts and write it into both DESIGN and RUN.
 
 ## When invoked: first design
 
@@ -96,7 +96,7 @@ If `docs/TASKS.md` is missing or empty:
 1. Resolve the requirements path (contracts skill). Confirm the file and **Application name**.
 2. Create/check out the git branch and write `docs/GITBRANCH.md` (include `requirements`).
 3. Record **start** in `docs/RUN.md` (see **Run clock and QA stats**).
-4. Write `docs/DESIGN.md` from the resolved requirements file (modules, data, persistence, UI, file layout). Include a **How to run** section (install, test once, start the app). Point at the branch file; do not invent a second branch name.
+4. Write `docs/DESIGN.md` from the resolved requirements file (modules, data, persistence, UI, file layout). Include a **How to run** section (install, test once, start the app) that follows **Shell commands** (separate lines, same on macOS and Windows). Point at the branch file; do not invent a second branch name.
 5. Split work into **small tasks**. Prefer: domain/store + validation → persistence → UI, using `depends_on` for real order. Set disjoint `files` per task so an explicit parallel request can run a safe wave. Include a test-runner setup task only if the repo has no runner yet.
 6. Return to the parent: branch name, resolved requirements path, start time, design summary, task ids, `depends_on` / `files`, the default **next single task**, and which ids are **parallel-safe** together (no overlap, dependencies satisfied).
 

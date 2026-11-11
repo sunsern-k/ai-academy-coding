@@ -6,6 +6,8 @@ The product is a Vite + TypeScript app: one todo list, stored in `localStorage`,
 
 Nothing in `src/` exists until the builder runs. This repository starts as the agents, their skills, and the requirements.
 
+Thai version: [README_TH.md](README_TH.md).
+
 ## Agents
 
 | Agent | Role |
@@ -13,15 +15,15 @@ Nothing in `src/` exists until the builder runs. This repository starts as the a
 | `app-architect` | Reads the requirements, creates a git branch (`cursor/todo-list`, or a timestamped name if that branch exists), and writes `docs/DESIGN.md`, `docs/TASKS.md`, `docs/GITBRANCH.md`, and `docs/RUN.md`. After each QA report it marks the task `done` or adds a fix task. It does not write application code. |
 | `app-builder` | Implements **one** open task, runs Vitest once, and writes `docs/QA-REPORT-<id>.md`. A passing task becomes `implemented`. The architect marks it `done`. |
 
-Skills live under `.cursor/skills/`. Shell rules for Windows and macOS are in `.cursor/skills/app-delivery-contracts/SKILL.md` (**Shell commands**). A task may be fixed at most twice (`T1-FIX1`, then `T1-FIX2`).
+Skills live under `.cursor/skills/`. Shell rules for Windows and macOS are in `.cursor/skills/app-delivery-contracts/SKILL.md` (**Shell commands**). Prefer Node for UTC timestamps when Node is on `PATH`; shell-specific `date` / PowerShell forms are the fallback. A task may be fixed at most twice (`T1-FIX1`, then `T1-FIX2`).
 
 ## Prerequisites
 
 - [Cursor](https://cursor.com)
 - Git
-- Node.js on `PATH` (needed when the builder installs and tests the app)
+- Node.js on `PATH` (needed when the builder installs and tests the app, and for portable UTC timestamps)
 
-On macOS, Cursor’s shell is usually zsh. On Windows, it is usually PowerShell. Git Bash on Windows can use the Unix `date` commands; PowerShell cannot (`date` there is `Get-Date`).
+On macOS, Cursor’s shell is usually zsh. On Windows, it is usually PowerShell. Prefer `node -e …` for timestamps on both. Git Bash on Windows can use Unix `date`; PowerShell cannot (`date` there is `Get-Date`).
 
 ## Run the demo
 
