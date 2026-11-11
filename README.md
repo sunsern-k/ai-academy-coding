@@ -18,7 +18,8 @@ git switch agents-ex02
 
 - Open this repository in Cursor and use **Agent** chat.
 - Invoke the agents yourself with `/app-architect` and `/app-builder`. The handoff between them is manual: neither agent starts the other.
-- Node.js **24.20.0** is the runtime the brief pins (`.nvmrc` is created during the build). You need it when you run the finished app.
+- Node.js **24.20.0** is the runtime the brief pins (`.nvmrc` is created during the build). You need it when you run the finished app. On macOS/Linux use nvm or fnm with `.nvmrc`; on Windows use nvm-windows, fnm, or the official installer for the same version.
+- Backend install compiles `better-sqlite3`: macOS needs Xcode Command Line Tools; Windows needs Visual Studio Build Tools (C++). Agents document this in **How to run**.
 - The agents create a git branch named `cursor/<slug>`. They do not commit or push unless you ask.
 
 ## Repository structure

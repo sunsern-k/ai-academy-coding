@@ -9,7 +9,7 @@ description: >-
 
 # App builder playbook
 
-Load `.cursor/skills/app-delivery-contracts/SKILL.md` first. The product source is the file named by `requirements` in `docs/GITBRANCH.md` — not a hard-coded path.
+Load `.cursor/skills/app-delivery-contracts/SKILL.md` first (including **Host OS and shell**). The product source is the file named by `requirements` in `docs/GITBRANCH.md` — not a hard-coded path.
 
 ## Product source
 
@@ -44,11 +44,11 @@ Load conflict and isolation rules from the contracts skill.
 - Follow the stack and design in the docs (e.g. store API, storage key, file layout).
 - Keep domain logic unit-testable; keep UI thin.
 - Add or update tests that map to **acceptance criteria** in the resolved requirements file for this task, and keep existing tests running.
-- Use the project's test runner from requirements/design (for this repo's demo: Vitest). Do not start a long watch process; run once (e.g. `npx vitest run`).
+- Use the project's test runner from the resolved requirements / design. For Truck2Hand that is the built-in **`node:test`** runner; run once with `npm test` in `backend/` (do not add Vitest/Jest unless the requirements file allows it). Do not start a long watch process.
 - If the runner is not set up and the task or board expects it, add a minimal setup so tests can execute.
 - You may iterate implement → test **within this one task**. If tests still fail, **stop**: write a FAIL report. Do not start the next feature task. Do not mark the task `implemented`. The architect owns further retries (`FIX1` / `FIX2`, max 2).
 - Edit only this task’s `files` list (and its QA report + its `docs/TASKS.md` status). If you need a file not listed, stop and tell the parent (conflict with another task).
-- If you add or change start/test scripts, update **How to run** in `docs/DESIGN.md`.
+- Follow **Host OS and shell**: portable `npm`/`node`/`git` commands; Node `path` for filesystem paths; when you add or change start/test scripts or README install steps, update **How to run** in `docs/DESIGN.md` with macOS and Windows notes (Node 24.20.0, native build tools for `better-sqlite3`).
 
 ## After you finish (always write a QA report)
 

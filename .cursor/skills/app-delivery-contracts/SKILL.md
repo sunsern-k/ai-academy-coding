@@ -18,6 +18,27 @@ Stop if that file is missing or has no **Application name**. Tell the parent to 
 
 Use a posix, repo-relative path. Persist it in `docs/GITBRANCH.md` so the builder never guesses the filename.
 
+## Host OS and shell
+
+Agents and skills must work on **macOS** and **Windows**. Detect the host before running or documenting setup/install/test/run commands (`node -p "process.platform"`, or the shell’s OS info). Do not assume bash, zsh, `date -u`, or Unix-only tools.
+
+**Timestamps (both OSes):** use Node, never `date -u`:
+
+- ISO-8601 UTC for `docs/RUN.md`:  
+  `node -e "console.log(new Date().toISOString().replace(/\.\d{3}Z$/,'Z'))"`
+- Compact UTC for branch suffixes:  
+  `node -e "const d=new Date(); const p=n=>String(n).padStart(2,'0'); console.log(d.getUTCFullYear()+p(d.getUTCMonth()+1)+p(d.getUTCDate())+'T'+p(d.getUTCHours())+p(d.getUTCMinutes())+p(d.getUTCSeconds())+'Z')"`
+
+**Commands to prefer:** `node`, `npm`, and `git` (same on both OSes). Run them from the package directory (`backend/` or `frontend/`). Avoid bash-only chaining in docs when a short per-directory sequence is clearer; `&&` is fine in modern PowerShell, CMD, and Unix shells.
+
+**Node version:** pin **24.20.0** per requirements (commit `.nvmrc` and `engines`). macOS/Linux: `nvm use` / `fnm use` reading `.nvmrc`. Windows: same version via nvm-windows, fnm, or the official installer — do not assume Unix `nvm` alone.
+
+**Native modules (e.g. better-sqlite3):** document OS build tools in **How to run** — macOS: Xcode Command Line Tools; Windows: Visual Studio Build Tools (Desktop development with C++). Do not swap the stack for OS differences.
+
+**Paths:** keep doc and `GITBRANCH.md` paths posix and repo-relative. In application code, use Node `path` / `fileURLToPath` for filesystem paths; keep HTTP and upload URL paths posix as in the API specs.
+
+**How to run (DESIGN / RUN / README):** include install, test, and start for both packages; use the test command from the resolved requirements (for Truck2Hand: `npm test` in `backend/` with `node:test`). Give macOS/Linux and Windows notes where version managers or native build tools differ; keep `npm`/`node` command lines identical when possible.
+
 ## `docs/GITBRANCH.md` (architect writes; builder reads)
 
 ```markdown
@@ -67,7 +88,7 @@ From **Application name** in the resolved requirements file:
 3. **Uniqueness (new branch only):** before creating a branch, check whether that name already exists **locally or on remotes**:
    - `git branch --list --all -- '<name>'` (or `git show-ref --verify --quiet refs/heads/<name>` and `refs/remotes/*/<name>`).
    - If the base name is **free**, use it.
-   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is UTC from `date -u +"%Y%m%dT%H%M%SZ"` (example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
+   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is compact UTC from the **Host OS and shell** Node one-liner (example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
 4. If `docs/GITBRANCH.md` already records a `branch` field, **reuse that name** (later runs). Do not invent another unique name.
 
 ## Git (architect, first kickoff)

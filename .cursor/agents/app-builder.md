@@ -22,7 +22,7 @@ The **parent agent** is the hub. When you finish, return a summary so the parent
 
 ## Required skills (load before doing work)
 
-1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md`.
+1. Read and follow `.cursor/skills/app-delivery-contracts/SKILL.md` (including **Host OS and shell** for install/test/run and filesystem paths).
 2. Read and follow `.cursor/skills/app-builder-playbook/SKILL.md`.
 
 Do not rely on auto-invocation.
