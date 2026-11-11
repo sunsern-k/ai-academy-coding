@@ -58,6 +58,65 @@ Default is **one builder worker = one task**. Parallel runs happen only when the
 
 **Coordinator vs worker:** a single `/app-builder` invocation that received multiple ids + “parallel” is the **coordinator**: conflict-check, spawn isolated workers, do not implement. A worker prompt names **exactly one** task id and must not spawn further subagents.
 
+## Shell commands (Windows and macOS)
+
+Pick the command from the **shell that is actually running**. Do not assume macOS. Cursor on macOS is usually zsh; Cursor on Windows is usually PowerShell. Git Bash on Windows is bash, so it uses the Unix commands.
+
+### UTC timestamps
+
+Never guess a timestamp. Do not run `date -u` in PowerShell: there `date` is `Get-Date`, and `-u` fails.
+
+**bash, zsh, or sh** (macOS, Linux, Git Bash):
+
+```bash
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+date -u +"%Y%m%dT%H%M%SZ"
+```
+
+**PowerShell** (`powershell` or `pwsh`). `InvariantCulture` keeps `-` and `:` stable on non-US locales:
+
+```powershell
+[DateTime]::UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", [Globalization.CultureInfo]::InvariantCulture)
+[DateTime]::UtcNow.ToString("yyyyMMdd'T'HHmmss'Z'")
+```
+
+**cmd.exe** (only if that is the shell): call PowerShell; do not use `date`.
+
+```bat
+powershell -NoProfile -Command "[DateTime]::UtcNow.ToString('yyyy-MM-dd''T''HH:mm:ss''Z''', [Globalization.CultureInfo]::InvariantCulture)"
+powershell -NoProfile -Command "[DateTime]::UtcNow.ToString('yyyyMMdd''T''HHmmss''Z''')"
+```
+
+ISO form example: `2026-11-11T01:40:41Z`. Compact form example: `20261111T014041Z`.
+
+### Git
+
+Same git verbs on both systems. Quote every ref pattern with **double quotes** so zsh does not glob it and cmd does not treat quotes as literal characters. Single quotes are fine in zsh and PowerShell; they are not quotes in cmd.exe.
+
+```bash
+git status
+git branch --show-current
+git switch -c "<unique-branch>"
+git branch --list --all -- "<name>"
+git branch --list --all -- "*/<name>"
+```
+
+`<name>` is the full branch, e.g. `cursor/todo-list`. The second `--list` pattern matches a remote-tracking line such as `remotes/origin/cursor/todo-list`.
+
+Do not run `git show-ref --verify` with an unquoted `refs/remotes/*/<name>`. `--verify` needs an exact ref, and in zsh an unmatched `*` exits with `no matches found` before git runs.
+
+### Install, test, and start
+
+Once Node is on `PATH`, these are the same in zsh, bash, PowerShell, and cmd:
+
+```bash
+npm install
+npx vitest run
+npm run dev
+```
+
+Write them as separate commands in **How to run**. Do not join them with `&&` (Windows PowerShell 5.1 rejects it). Do not add `open`, `start`, `xdg-open`, `export`, or `$env:`. The app URL is `http://localhost:5173` unless the dev script prints a different one.
+
 ## Branch name
 
 From **Application name** in the resolved requirements file:
@@ -65,9 +124,9 @@ From **Application name** in the resolved requirements file:
 1. Trim, lowercase, replace spaces with `-`, keep only `a-z`, `0-9`, and `-`, collapse repeat hyphens, strip edge hyphens.
 2. **Base name:** `cursor/<slug>` (example: `Todo List` → `cursor/todo-list`).
 3. **Uniqueness (new branch only):** before creating a branch, check whether that name already exists **locally or on remotes**:
-   - `git branch --list --all -- '<name>'` (or `git show-ref --verify --quiet refs/heads/<name>` and `refs/remotes/*/<name>`).
+   - `git branch --list --all -- "<name>"` and `git branch --list --all -- "*/<name>"` (see **Shell commands**). An exact local ref check is `git show-ref --verify --quiet "refs/heads/<name>"`.
    - If the base name is **free**, use it.
-   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is UTC from `date -u +"%Y%m%dT%H%M%SZ"` (example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
+   - If it **already exists**, do **not** switch to it. Compute a unique name `cursor/<slug>-<datetime>` where `<datetime>` is the compact UTC timestamp for the current shell (see **Shell commands**; example: `cursor/todo-list-20260922T152830Z`). Check that suffixed name the same way. If it still exists, append `-` plus a 2-digit counter (`-01`, `-02`, …) until free.
 4. If `docs/GITBRANCH.md` already records a `branch` field, **reuse that name** (later runs). Do not invent another unique name.
 
 ## Git (architect, first kickoff)
@@ -78,7 +137,7 @@ On the **first** design run (`docs/TASKS.md` missing or empty):
 2. If `docs/GITBRANCH.md` already has a `branch` value, use that name (do not re-unique).
 3. Else compute a **unique** branch name (see **Branch name**) and write `docs/GITBRANCH.md` (including `requirements` and the chosen `branch`).
 4. If already on that unique branch, keep it.
-5. Else `git switch -c <unique-branch>` from current HEAD (do not reset, force-checkout, or rewrite history). **Never** `git switch` onto an existing leftover `cursor/<slug>` that you did not record in `docs/GITBRANCH.md`.
+5. Else `git switch -c "<unique-branch>"` from current HEAD (do not reset, force-checkout, or rewrite history). **Never** `git switch` onto an existing leftover `cursor/<slug>` that you did not record in `docs/GITBRANCH.md`.
 
 On later runs: read `docs/GITBRANCH.md` and switch to that stored branch. Never create extra feature branches. Never push. Never commit unless the parent asked.
 
