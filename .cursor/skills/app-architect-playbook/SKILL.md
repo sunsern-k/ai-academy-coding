@@ -37,7 +37,8 @@ Meaning:
 
 You own the wall-clock for this delivery. Subagents do not share memory, so **persist it in `docs/RUN.md`**.
 
-Get timestamps with a shell command, not by guessing: `date -u +"%Y-%m-%dT%H:%M:%SZ"` (UTC ISO-8601).
+Get timestamps with a shell command, not by guessing. Use the ISO UTC command for the shell that is running (contracts skill, **Shell commands**). On bash/zsh that is `date -u +"%Y-%m-%dT%H:%M:%SZ"`. In PowerShell do not run `date -u`.
+
 
 **First prompt (start):** on the first design run, if `docs/RUN.md` is missing or has no **start**, write the file and set **start** to now. Never change **start** on later runs.
 
